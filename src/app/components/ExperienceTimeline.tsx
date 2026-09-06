@@ -304,11 +304,11 @@ function TimelineEntry({ entry, index }: { entry: Entry; index: number }) {
             <span style={{
               display: "inline-flex", alignItems: "center", gap: "4px",
               fontSize: "8.5px", letterSpacing: "0.12em", textTransform: "uppercase",
-              color: entry.accentColor, fontWeight: 600,
+              color: "var(--accent-current, #005da6)", fontWeight: 600,
             }}>
               <span className="tl-blink-dot" style={{
                 display: "inline-block", width: "5px", height: "5px",
-                borderRadius: "50%", background: entry.accentColor,
+                borderRadius: "50%", background: "var(--accent-current, #005da6)",
               }} />
               May 2025 • Current
             </span>

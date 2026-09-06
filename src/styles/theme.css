@@ -58,9 +58,10 @@
   --border-soft:    rgba(255,255,255,0.08);
   --border-strong:  rgba(255,255,255,0.16);
   --accent:         #c5dc4b;
+  --accent-current: #38bdf8;
   --shadow-card:    0 8px 32px rgba(0,0,0,0.40);
 }
-[data-theme="light"] {
+[data-theme="light"], .light {
   --bg-page:        #fafbfd;
   --bg-page-gradient: none;
   --bg-page-bloom:  rgba(255,200,120,0.20);
@@ -73,6 +74,7 @@
   --border-soft:    rgba(15,20,30,0.10);
   --border-strong:  rgba(15,20,30,0.16);
   --accent:         #4a5615;
+  --accent-current: #005da6;
   --shadow-card:    0 8px 28px rgba(15,20,30,0.08), 0 2px 6px rgba(15,20,30,0.04);
 }
 
@@ -857,7 +859,7 @@ body {
   border-radius: 9999px;
   border: 1px solid rgba(255,255,255,0.13);
   background: rgba(10,12,22,0.70);
-  color: rgba(255,255,255,0.62);
+  color: rgba(255,255,255,0.82);
   transition:
     background 0.32s ease,
     box-shadow 0.32s ease,
@@ -891,10 +893,11 @@ body {
     inset 0 -2px 10px rgba(0,0,0,0.32),
     0 4px 12px rgba(0,0,0,0.30);
 }
-[data-theme="light"] .skill-tag {
+[data-theme="light"] .skill-tag,
+.light .skill-tag {
   border-color: rgba(15,20,30,0.14);
   background: rgba(255,255,255,0.85);
-  color: rgba(15,20,30,0.62);
+  color: rgba(15,20,30,0.78);
 }
 [data-theme="light"] .skill-tag:hover {
   background:

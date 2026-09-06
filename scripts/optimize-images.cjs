@@ -8,7 +8,7 @@ const configs = [
   // ── Heavy Scenery Assets ──
   {
     input: 'public/IMG/Landing_background.png',
-    widths: [768, 1440, 1920, 2560],
+    widths: [768, 1440, 1586],
     avifQ: 68,
     webpQ: 80,
     outDir: 'public/IMG',
@@ -16,7 +16,7 @@ const configs = [
   },
   {
     input: 'public/IMG/Cloud with earth.png',
-    widths: [768, 1280, 1920],
+    widths: [768, 1280, 1584],
     avifQ: 68,
     webpQ: 80,
     outDir: 'public/IMG',
@@ -24,7 +24,7 @@ const configs = [
   },
   {
     input: 'public/IMG/Footer Light.png',
-    widths: [768, 1280, 1920],
+    widths: [768, 1280, 1672],
     avifQ: 68,
     webpQ: 80,
     outDir: 'public/IMG',

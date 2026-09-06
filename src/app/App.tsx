@@ -1474,6 +1474,17 @@ export default function App() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash) {
+      const id = window.location.hash.replace("#", "");
+      const timer = setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "instant", block: "start" });
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [route]);
+
   // Apply the selected theme mode globally
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", themeMode);
