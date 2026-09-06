@@ -251,19 +251,31 @@ const projects: {
     title: "Viva Engage Communities",
     description:
       "Reimagine how Communities in Viva Engage can help us achieve local goals, foster deeper connections, and drive meaningful engagement.",
-    ctas: [{ label: "View more", href: "https://www.figma.com/deck/ELKvu1uZ9wBlg314EFdMVO/Communities-2.0--Hack?node-id=1-16&viewport=-101%2C-140%2C0.65&t=5MqLdsILtEH45MGQ-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1", internal: true }],
+    ctas: [{ label: "View Communities Case Study", href: "https://www.figma.com/deck/ELKvu1uZ9wBlg314EFdMVO/Communities-2.0--Hack?node-id=1-16&viewport=-101%2C-140%2C0.65&t=5MqLdsILtEH45MGQ-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1", internal: true }],
     thumb: (
       <div className="w-full h-full overflow-hidden rounded-xl">
-        <img
-          src={`${import.meta.env.BASE_URL}IMG/Communities.png`}
-          alt="Viva Engage Communities"
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          width={728}
-          height={540}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Communities-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Communities-540.avif 540w, ${import.meta.env.BASE_URL}IMG/Communities-728.avif 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <source
+            type="image/webp"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Communities-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Communities-540.webp 540w, ${import.meta.env.BASE_URL}IMG/Communities-728.webp 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <img
+            src={`${import.meta.env.BASE_URL}IMG/Communities.png`}
+            alt="Viva Engage Communities"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            width={728}
+            height={540}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          />
+        </picture>
       </div>
     ),
   },
@@ -271,19 +283,31 @@ const projects: {
     title: "AI Powered Help-desk Experience",
     description:
       "Redesign the help desk experience to self-serve & self-help for solving the technology needs through a predictive & personalised experience.",
-    ctas: [{ label: "View more", href: "https://docs.google.com/presentation/d/e/2PACX-1vQvENFUrPSpj9opoTOxY0pCLjRgFd63Jnu5Ps8BQa4SBmR6Tj_uToYbOo2EoOZS3Dj5kqW2d9gaSXrF/pub?start=false&loop=false&delayms=3000" }],
+    ctas: [{ label: "View Help-desk Case Study", href: "https://docs.google.com/presentation/d/e/2PACX-1vQvENFUrPSpj9opoTOxY0pCLjRgFd63Jnu5Ps8BQa4SBmR6Tj_uToYbOo2EoOZS3Dj5kqW2d9gaSXrF/pub?start=false&loop=false&delayms=3000" }],
     thumb: (
       <div className="w-full h-full overflow-hidden rounded-xl">
-        <img
-          src={`${import.meta.env.BASE_URL}IMG/Helpdesk_Card.png`}
-          alt="AI Powered Help-desk Experience"
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          width={728}
-          height={540}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Helpdesk_Card-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Helpdesk_Card-540.avif 540w, ${import.meta.env.BASE_URL}IMG/Helpdesk_Card-728.avif 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <source
+            type="image/webp"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Helpdesk_Card-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Helpdesk_Card-540.webp 540w, ${import.meta.env.BASE_URL}IMG/Helpdesk_Card-728.webp 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <img
+            src={`${import.meta.env.BASE_URL}IMG/Helpdesk_Card.png`}
+            alt="AI Powered Help-desk Experience"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            width={728}
+            height={540}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          />
+        </picture>
       </div>
     ),
   },
@@ -297,16 +321,28 @@ const projects: {
     ],
     thumb: (
       <div className="w-full h-full overflow-hidden rounded-xl">
-        <img
-          src={`${import.meta.env.BASE_URL}IMG/feedback_Card.png`}
-          alt="Feedback 360"
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          width={728}
-          height={570}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={`${import.meta.env.BASE_URL}IMG/feedback_Card-360.avif 360w, ${import.meta.env.BASE_URL}IMG/feedback_Card-540.avif 540w, ${import.meta.env.BASE_URL}IMG/feedback_Card-728.avif 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <source
+            type="image/webp"
+            srcSet={`${import.meta.env.BASE_URL}IMG/feedback_Card-360.webp 360w, ${import.meta.env.BASE_URL}IMG/feedback_Card-540.webp 540w, ${import.meta.env.BASE_URL}IMG/feedback_Card-728.webp 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <img
+            src={`${import.meta.env.BASE_URL}IMG/feedback_Card.png`}
+            alt="Feedback 360"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            width={728}
+            height={570}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          />
+        </picture>
       </div>
     ),
   },
@@ -314,19 +350,31 @@ const projects: {
     title: "Notification Experience Design",
     description:
       "Notification XD Playbook helps the product to proactively notify the on-going users problems and also allowing them to take necessary action through recommendations at any point in time.",
-    ctas: [{ label: "View more", href: "https://docs.google.com/presentation/d/10f2xETw-H17PE4fwk7_gnLniytWco4oBRpC-0JpCjNw/pub?start=false&loop=false&delayms=10000" }],
+    ctas: [{ label: "View Notification Playbook", href: "https://docs.google.com/presentation/d/10f2xETw-H17PE4fwk7_gnLniytWco4oBRpC-0JpCjNw/pub?start=false&loop=false&delayms=10000" }],
     thumb: (
       <div className="w-full h-full overflow-hidden rounded-xl">
-        <img
-          src={`${import.meta.env.BASE_URL}IMG/Notification_Card.png`}
-          alt="Notification Experience Design"
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          width={728}
-          height={588}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Notification_Card-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Notification_Card-540.avif 540w, ${import.meta.env.BASE_URL}IMG/Notification_Card-728.avif 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <source
+            type="image/webp"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Notification_Card-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Notification_Card-540.webp 540w, ${import.meta.env.BASE_URL}IMG/Notification_Card-728.webp 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <img
+            src={`${import.meta.env.BASE_URL}IMG/Notification_Card.png`}
+            alt="Notification Experience Design"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            width={728}
+            height={588}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          />
+        </picture>
       </div>
     ),
   },
@@ -816,19 +864,24 @@ export function WorkSection({
         {/* Mobile Pagination & Navigation Bar */}
         <div className="flex items-center justify-between px-6 mt-4">
           {/* Pagination Indicators */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {projects.map((_, idx) => (
               <button
                 key={idx}
                 type="button"
                 aria-label={`Go to slide ${idx + 1}`}
+                aria-current={activeMobileSlide === idx ? "true" : undefined}
                 onClick={() => scrollToMobileSlide(idx)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  activeMobileSlide === idx
-                    ? "w-7 bg-white shadow-xs"
-                    : "w-2 bg-white/30 hover:bg-white/50"
-                }`}
-              />
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center -mx-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-full"
+              >
+                <span
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    activeMobileSlide === idx
+                      ? "w-7 bg-white shadow-xs"
+                      : "w-2 bg-white/30 hover:bg-white/50"
+                  }`}
+                />
+              </button>
             ))}
           </div>
 
@@ -843,18 +896,18 @@ export function WorkSection({
                 aria-label="Previous work"
                 disabled={activeMobileSlide === 0}
                 onClick={() => scrollToMobileSlide(activeMobileSlide - 1)}
-                className="w-8 h-8 rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 type="button"
                 aria-label="Next work"
                 disabled={activeMobileSlide === projects.length - 1}
                 onClick={() => scrollToMobileSlide(activeMobileSlide + 1)}
-                className="w-8 h-8 rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           </div>

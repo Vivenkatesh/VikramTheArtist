@@ -251,17 +251,28 @@ function TimelineEntry({ entry, index }: { entry: Entry; index: number }) {
   return (
     <div
       className={`tl-entry tl-s${index} ${hovered ? "is-hovered" : ""}`}
+      role={hasDesc ? "button" : undefined}
+      tabIndex={hasDesc ? 0 : undefined}
+      aria-expanded={hasDesc ? isOpened : undefined}
+      aria-controls={hasDesc ? `tl-desc-${index}` : undefined}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      onClick={() => setHovered(!hovered)}
+      onClick={() => hasDesc && setHovered(!hovered)}
+      onKeyDown={(e) => {
+        if (hasDesc && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          setHovered(!hovered);
+        }
+      }}
       style={{
         padding: "14px 20px",
         borderRadius: "14px",
         position: "relative",
         cursor: hasDesc ? "pointer" : "default",
         transition: "background 0.25s ease",
+        outline: "none",
       }}
     >
       {/* ── Main row ── */}
@@ -369,7 +380,7 @@ function TimelineEntry({ entry, index }: { entry: Entry; index: number }) {
 
       {/* ── Expandable description ── */}
       {hasDesc && (
-        <div className="tl-desc-wrapper">
+        <div id={`tl-desc-${index}`} className="tl-desc-wrapper" aria-hidden={!isOpened}>
           <div className="tl-desc-inner" style={{ display: "flex" }}>
             {/* Spacer aligns content under right column on desktop */}
             <div className="tl-desc-spacer" style={{ flex: "0 0 calc(50% + 2px)", flexShrink: 0 }} />
@@ -415,8 +426,12 @@ export function ExperienceTimeline() {
           transition: background 0.25s ease;
         }
         .tl-entry:hover,
-        .tl-entry.is-hovered {
-          background: rgba(255, 255, 255, 0.025);
+        .tl-entry.is-hovered,
+        .tl-entry:focus-visible {
+          background: rgba(255, 255, 255, 0.04);
+        }
+        .tl-entry:focus-visible {
+          box-shadow: 0 0 0 2px #3b82f6;
         }
 
         .tl-desc-wrapper {
@@ -429,7 +444,8 @@ export function ExperienceTimeline() {
           overflow: hidden;
         }
         .tl-entry:hover .tl-desc-wrapper,
-        .tl-entry.is-hovered .tl-desc-wrapper {
+        .tl-entry.is-hovered .tl-desc-wrapper,
+        .tl-entry:focus-visible .tl-desc-wrapper {
           grid-template-rows: 1fr;
           opacity: 1;
         }
@@ -437,14 +453,16 @@ export function ExperienceTimeline() {
           transition: transform 0.35s ease;
         }
         .tl-entry:hover .tl-logo-box,
-        .tl-entry.is-hovered .tl-logo-box {
+        .tl-entry.is-hovered .tl-logo-box,
+        .tl-entry:focus-visible .tl-logo-box {
           transform: scale(1.07) translateX(-2px);
         }
         .tl-entry .tl-dot-sphere {
           transition: box-shadow 0.35s ease, transform 0.35s ease, background 0.35s ease;
         }
         .tl-entry:hover .tl-dot-sphere,
-        .tl-entry.is-hovered .tl-dot-sphere {
+        .tl-entry.is-hovered .tl-dot-sphere,
+        .tl-entry:focus-visible .tl-dot-sphere {
           transform: scale(1.15);
         }
       `}</style>

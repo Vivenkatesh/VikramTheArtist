@@ -12,14 +12,36 @@
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
       <link rel="preconnect" href="https://api.fontshare.com" />
       <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
-      <!-- Non-blocking font stylesheets -->
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+      <!-- Preload critical hero background for immediate LCP -->
+      <link rel="preload" as="image" type="image/avif" href="./IMG/Landing_background-768.avif" media="(max-width: 768px)" />
+      <link rel="preload" as="image" type="image/avif" href="./IMG/Landing_background-1440.avif" media="(min-width: 769px)" />
+      <!-- Instant theme detection to prevent flash of wrong theme -->
+      <script>
+        (function() {
+          try {
+            var saved = localStorage.getItem('theme_mode') || localStorage.getItem('adopt_theme_mode');
+            var mode = saved;
+            if (!mode) {
+              mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', mode);
+            if (mode === 'dark') {
+              document.documentElement.classList.add('dark');
+              document.documentElement.classList.remove('light');
+            } else {
+              document.documentElement.classList.add('light');
+              document.documentElement.classList.remove('dark');
+            }
+          } catch(e) {}
+        })();
+      </script>
+
+      <!-- Non-blocking font stylesheets (Only essential fonts: Inter, DM Serif Display, Satoshi) -->
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" media="print" onload="this.media='all'" />
       <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" media="print" onload="this.media='all'" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Lato:wght@100;300;400;700&family=Merriweather:wght@300;400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500&display=swap" media="print" onload="this.media='all'" />
       <noscript>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" />
         <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lato:wght@100;300;400;700&family=Merriweather:wght@300;400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500&display=swap" />
       </noscript>
 
       <title>Vikram Venkatesh — AI Product Design Leader</title>
@@ -74,9 +96,8 @@
       }
       </script>
 
-      <!-- Preload responsive LCP candidates -->
-      <link rel="preload" as="image" href="/IMG/Planet%201-256.avif" type="image/avif" imagesrcset="/IMG/Planet%201-128.avif 128w, /IMG/Planet%201-256.avif 256w, /IMG/Planet%201-384.avif 384w" imagesizes="clamp(110px, 9vw, 170px)" media="(max-width: 767px)" fetchpriority="high" />
-      <link rel="preload" as="image" href="/IMG/Earth_only_2x-1200.avif" type="image/avif" imagesrcset="/IMG/Earth_only_2x-768.avif 768w, /IMG/Earth_only_2x-1200.avif 1200w, /IMG/Earth_only_2x-1536.avif 1536w" imagesizes="160vw" media="(min-width: 768px)" fetchpriority="high" />
+      <!-- Preload responsive LCP hero sky background -->
+      <link rel="preload" as="image" href="/IMG/Landing_background-768.avif" type="image/avif" imagesrcset="/IMG/Landing_background-768.avif 768w, /IMG/Landing_background-1440.avif 1440w, /IMG/Landing_background.avif 1586w" imagesizes="100vw" fetchpriority="high" />
 
       <!-- Google tag (gtag.js) - Initialized on first interaction or post-load idle -->
       <script>

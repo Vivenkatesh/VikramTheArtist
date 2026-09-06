@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
+import { useMemo, useEffect, useRef, useCallback } from "react";
 
 /* ── Star Canvas (replaces 740 individual DOM nodes) ────────────
  * All 4 star layers drawn on one <canvas>. Each layer has a parallax
@@ -174,64 +174,12 @@ function ShootingStars() {
   );
 }
 
-/* ── Hero ───────────────────────────────────────────────────── */
-const GREETINGS = ["Hi", "Hoi", "வணக்கம்", "Hej", "नमस्ते", "Ahoj", "Cześć"];
-const GRAPHEMES = (GREETINGS || ["Hi"]).map((w) => {
-  try {
-    if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
-      return [...new (Intl as any).Segmenter().segment(w)].map((s: any) => s.segment);
-    }
-  } catch {}
-  return Array.from(w);
-});
-
 interface HeroProps {
   mode?: "dark" | "light";
 }
 
 export function Hero({ mode = "dark" }: HeroProps) {
   const isLight = mode === "light";
-  const [displayed, setDisplayed] = useState("Hi");
-  const [showCursor, setShowCursor] = useState(true);
-
-  useEffect(() => {
-    if (isLight) return;
-    let wIdx = 0;
-    let charIdx = (GRAPHEMES[0] && GRAPHEMES[0].length) ? GRAPHEMES[0].length : 2;
-    let deleting = false;
-    let timer: ReturnType<typeof setTimeout>;
-
-    const tick = () => {
-      const clusters = GRAPHEMES[wIdx] || ["H", "i"];
-      if (!deleting) {
-        if (charIdx < clusters.length) {
-          charIdx++;
-          setDisplayed(clusters.slice(0, charIdx).join(""));
-          timer = setTimeout(tick, 90);
-        } else {
-          deleting = true;
-          timer = setTimeout(tick, 1400);
-        }
-      } else {
-        if (charIdx > 0) {
-          charIdx--;
-          setDisplayed(clusters.slice(0, charIdx).join(""));
-          timer = setTimeout(tick, 55);
-        } else {
-          wIdx = (wIdx + 1) % (GRAPHEMES.length || 1);
-          charIdx = 0;
-          deleting = false;
-          timer = setTimeout(tick, 200);
-        }
-      }
-    };
-    timer = setTimeout(tick, 1600);
-    const cursorTimer = setInterval(() => setShowCursor((v) => !v), 850);
-    return () => {
-      clearTimeout(timer);
-      clearInterval(cursorTimer);
-    };
-  }, [isLight]);
 
   const handleExploreClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -296,131 +244,87 @@ export function Hero({ mode = "dark" }: HeroProps) {
           <div className="hide-in-light fade-with-theme"><ShootingStars /></div>
         )}
 
-        {isLight ? (
-          /* ── LIGHT MODE HERO NARRATIVE (Matches Reference Mockup) ── */
-          <div className="hero-title-block max-w-[780px] pt-12 sm:pt-16 md:pt-24 lg:pt-28 relative z-20 text-left items-start" style={{ transform: "translateY(50px)" }}>
-            <div className="hero-heading-container flex flex-col items-start text-left">
-              {/* Greeting */}
-              <p
-                className="text-[#475569] mb-3 sm:mb-4 flex items-center gap-1.5"
-                style={{ fontFamily: "'Inter', sans-serif", fontWeight: 400, fontSize: "clamp(20px, 1.8vw, 24px)", lineHeight: 1.3 }}
+        <div className="hero-title-block max-w-[780px] pt-12 sm:pt-16 md:pt-24 lg:pt-28 relative z-20 text-left items-start" style={{ transform: "translateY(50px)" }}>
+          <div className="hero-heading-container flex flex-col items-start text-left min-h-[140px] sm:min-h-[160px]">
+            {/* Greeting */}
+            <p
+              className={`mb-3 sm:mb-4 flex items-center gap-1.5 ${isLight ? "text-[#475569]" : "text-white/75"}`}
+              style={{ fontFamily: "'Inter', sans-serif", fontWeight: 400, fontSize: "clamp(20px, 1.8vw, 24px)", lineHeight: 1.3 }}
+            >
+              <span>Hi, I'm Vikram</span>
+            </p>
+
+            {/* Main Editorial Serif Heading */}
+            <h1
+              className="leading-[1.08] tracking-[-0.03em]"
+              style={{
+                fontFamily: "Georgia, serif",
+                fontWeight: 900,
+                fontSize: "clamp(1.85rem, 3.6vw, 3.15rem)",
+                margin: "0 0 0 0",
+              }}
+            >
+              <span
+                className={`block whitespace-normal sm:whitespace-nowrap ${isLight ? "text-[#070e24]" : "text-white"}`}
               >
-                <span>Hi, I'm Vikram</span>
-              </p>
-
-              {/* Main Editorial Serif Heading */}
-              <h1
-                className="leading-[1.08] tracking-[-0.03em]"
-                style={{
-                  fontFamily: "Georgia, serif",
-                  fontWeight: 900,
-                  fontSize: "clamp(1.85rem, 3.6vw, 3.15rem)",
-                  margin: "0 0 0 0",
-                }}
+                I design AI-first products
+              </span>
+              <span
+                className={`block whitespace-normal sm:whitespace-nowrap ${isLight ? "text-[#070e24]" : "text-white"}`}
               >
-                <span
-                  className="block whitespace-normal sm:whitespace-nowrap text-[#070e24]"
-                  style={{
-                    color: "#070e24",
-                  }}
-                >
-                  I design AI-first products
-                </span>
-                <span
-                  className="block whitespace-normal sm:whitespace-nowrap text-[#070e24]"
-                  style={{
-                    color: "#070e24",
-                  }}
-                >
-                  that feel human.
-                </span>
-              </h1>
-            </div>
+                that feel human.
+              </span>
+            </h1>
+          </div>
 
-            <div className="hero-subtitle-block flex flex-col items-start text-left" style={{ marginTop: '2px', marginBottom: 0, width: '100%' }}>
-              {/* Subtitle */}
-              <p
-                className="font-bold text-[#475569] max-w-3xl sm:whitespace-nowrap"
-                style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: "clamp(19px, 1.55vw, 22.5px)", lineHeight: 1.4, margin: "0 0 28px 0" }}
+          <div className="hero-subtitle-block flex flex-col items-start text-left" style={{ marginTop: '2px', marginBottom: 0, width: '100%' }}>
+            {/* Subtitle */}
+            <p
+              className={`font-semibold max-w-3xl sm:whitespace-nowrap ${isLight ? "text-[#475569]" : "text-white/80"}`}
+              style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: "clamp(19px, 1.55vw, 22.5px)", lineHeight: 1.4, margin: "0 0 28px 0" }}
+            >
+              Product Designer at Microsoft. Previously at Google and McKinsey.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-5 sm:gap-7">
+              <a
+                href="#work"
+                onClick={handleExploreClick}
+                className="primary-button btn-primary adopt-hero-btn-primary group"
+                style={{ textDecoration: "none" }}
               >
-                Product Designer at Microsoft. Previously at Google and McKinsey.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-5 sm:gap-7">
-                <a
-                  href="#work"
-                  onClick={handleExploreClick}
-                  className="primary-button btn-primary adopt-hero-btn-primary group"
-                  style={{ textDecoration: "none" }}
-                >
-                  <span>Explore my work</span>
-                  <span className="btn-primary-circle-arrow adopt-btn-circle-arrow">
-                    <svg
-                      className="w-3.5 h-3.5 text-[#3e38f5] stroke-[2.5]"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M12 5v14M19 12l-7 7-7-7" />
-                    </svg>
-                  </span>
-                </a>
-
-                <a
-                  href="#about"
-                  className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#070e24] hover:text-[#3e38f5] transition-colors cursor-pointer group"
-                >
-                  <span className="border-b border-[#070e24] pb-0.5 group-hover:border-[#3e38f5]">About my journey</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
+                <span>Explore my work</span>
+                <span className="btn-primary-circle-arrow adopt-btn-circle-arrow">
+                  <svg
+                    className="w-3.5 h-3.5 text-[#3e38f5] stroke-[2.5]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 5v14M19 12l-7 7-7-7" />
                   </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* ── DARK MODE HERO NARRATIVE ── */
-          <div className="hero-title-block">
-            <div className="hero-heading-container">
-              <h1
-                aria-label="Hi, I am Vikram"
-                className="h-grad-bright"
-                style={{
-                  fontFamily: "'Lato', sans-serif",
-                  fontWeight: 300,
-                  fontSize: 'clamp(2.35rem, 7.2vw, 4.25rem)',
-                  lineHeight: 1.16,
-                  margin: 0,
-                  opacity: 0.9,
-                  display: "inline-block",
-                }}
+                </span>
+              </a>
+
+              <a
+                href="#about"
+                className={`inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-colors cursor-pointer group ${
+                  isLight ? "text-[#070e24] hover:text-[#3e38f5]" : "text-white/85 hover:text-white"
+                }`}
               >
-                <span className="block md:inline" aria-hidden="true" style={{ fontFamily: "'Lato', sans-serif", fontWeight: 200, color: "#ffffff" }}>
-                  {displayed}
-                  <span style={{ display: "inline-block", width: "2px", height: "0.85em",
-                    background: "#ffffff", marginLeft: "2px", verticalAlign: "middle",
-                    borderRadius: "1px", opacity: showCursor ? 1 : 0, transition: "opacity 0.1s" }} />
-                  <span>,</span>
+                <span className={`border-b pb-0.5 ${isLight ? "border-[#070e24] group-hover:border-[#3e38f5]" : "border-white/60 group-hover:border-white"}`}>
+                  About my journey
                 </span>
-                <span className="block md:inline whitespace-nowrap mt-0.5 md:mt-0 md:ml-3" aria-hidden="true" style={{ color: "rgba(255, 255, 255, 0.62)", fontWeight: 300 }}>
-                  {"I am Vikram "}
-                  <span style={{ WebkitTextFillColor: "initial", verticalAlign: "baseline" }}>✌🏻</span>
-                </span>
-              </h1>
-            </div>
-            <div className="hero-subtitle-block" style={{ marginTop: '26px', marginBottom: 0, width: '100%' }}>
-              <p className="hero-subtitle" style={{ fontFamily: "'Georgia', serif", fontWeight: 400, fontSize: "clamp(18px, 2.1vw, 34px)", lineHeight: 1.35, color: '#FFFFFF', margin: 0 }}>
-                Product Designer at Microsoft,<br className="block sm:hidden" /> <span className="inline">Designing AI-first products</span>
-              </p>
-              <p style={{ fontFamily: "'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif", fontWeight: 300, fontSize: 'clamp(14px, 1.4vw, 22px)', lineHeight: 1.4, color: 'rgba(255, 255, 255, 0.65)', margin: '10px 0 0 0' }}>
-                Previously at Google and Mckinsey
-              </p>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
             </div>
           </div>
-        )}
+        </div>
       </section>
     </>
   );

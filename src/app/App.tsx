@@ -37,6 +37,9 @@ const initialAdoptTheme = (): ThemeMode => {
   if (typeof window !== "undefined") {
     const saved = localStorage.getItem("adopt_theme_mode") || localStorage.getItem("theme_mode");
     if (saved === "light" || saved === "dark") return saved;
+    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
   }
   return "light";
 };
@@ -560,21 +563,33 @@ function EarthParallax({ mode = "dark" }: { mode?: ThemeMode }) {
                 opacity: 0,
               }}
             >
-              <img
-                src={`${import.meta.env.BASE_URL}IMG/Astronaut_Standing.png`}
-                alt="Standing Astronaut"
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                width={1024}
-                height={1536}
-                style={{
-                  width: "82%",
-                  height: "auto",
-                  objectFit: "contain",
-                  filter: "drop-shadow(0 28px 45px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 35px rgba(100, 160, 255, 0.35))",
-                }}
-              />
+              <picture style={{ display: "contents" }}>
+                <source
+                  type="image/avif"
+                  srcSet={`${import.meta.env.BASE_URL}IMG/Astronaut_Standing-480.avif 480w, ${import.meta.env.BASE_URL}IMG/Astronaut_Standing-768.avif 768w, ${import.meta.env.BASE_URL}IMG/Astronaut_Standing-1024.avif 1024w`}
+                  sizes="(max-width: 768px) 80vw, 450px"
+                />
+                <source
+                  type="image/webp"
+                  srcSet={`${import.meta.env.BASE_URL}IMG/Astronaut_Standing-480.webp 480w, ${import.meta.env.BASE_URL}IMG/Astronaut_Standing-768.webp 768w, ${import.meta.env.BASE_URL}IMG/Astronaut_Standing-1024.webp 1024w`}
+                  sizes="(max-width: 768px) 80vw, 450px"
+                />
+                <img
+                  src={`${import.meta.env.BASE_URL}IMG/Astronaut_Standing.png`}
+                  alt="Standing Astronaut"
+                  loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
+                  width={1024}
+                  height={1536}
+                  style={{
+                    width: "82%",
+                    height: "auto",
+                    objectFit: "contain",
+                    filter: "drop-shadow(0 28px 45px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 35px rgba(100, 160, 255, 0.35))",
+                  }}
+                />
+              </picture>
             </div>
           </div>
         </div>
@@ -908,65 +923,107 @@ function LightSkyParallax() {
       }}
     >
       {/* 1. Background Sky (Hero) */}
-      <img
-        ref={imgRef}
-        src={`${import.meta.env.BASE_URL}IMG/Landing_background.png`}
-        alt=""
-        loading="eager"
-        fetchPriority="high"
-        decoding="async"
-        className="w-full h-full select-none absolute inset-0"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "top center",
-          transformOrigin: "center 30%",
-          willChange: "transform, filter, opacity",
-        }}
-      />
+      <picture style={{ display: "contents" }}>
+        <source
+          type="image/avif"
+          srcSet={`${import.meta.env.BASE_URL}IMG/Landing_background-768.avif 768w, ${import.meta.env.BASE_URL}IMG/Landing_background-1440.avif 1440w, ${import.meta.env.BASE_URL}IMG/Landing_background-1586.avif 1586w`}
+          sizes="100vw"
+        />
+        <source
+          type="image/webp"
+          srcSet={`${import.meta.env.BASE_URL}IMG/Landing_background-768.webp 768w, ${import.meta.env.BASE_URL}IMG/Landing_background-1440.webp 1440w, ${import.meta.env.BASE_URL}IMG/Landing_background-1586.webp 1586w`}
+          sizes="100vw"
+        />
+        <img
+          ref={imgRef}
+          src={`${import.meta.env.BASE_URL}IMG/Landing_background.png`}
+          alt=""
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          width={1586}
+          height={1184}
+          className="w-full h-full select-none absolute inset-0"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "top center",
+            transformOrigin: "center 30%",
+            willChange: "transform, filter, opacity",
+          }}
+        />
+      </picture>
 
       {/* 2. Cloud with Earth Scene (Fades in after My Work cards, fades out at Skills) */}
-      <img
-        ref={earthCloudRef}
-        src={`${import.meta.env.BASE_URL}IMG/Cloud with earth.png`}
-        alt=""
-        loading="eager"
-        fetchPriority="high"
-        decoding="async"
-        className="w-full h-full select-none absolute inset-0"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "center center",
-          transformOrigin: "center center",
-          opacity: 0,
-          display: "none",
-          willChange: "transform, filter, opacity",
-        }}
-      />
+      <picture style={{ display: "contents" }}>
+        <source
+          type="image/avif"
+          srcSet={`${import.meta.env.BASE_URL}IMG/Cloud%20with%20earth-768.avif 768w, ${import.meta.env.BASE_URL}IMG/Cloud%20with%20earth-1280.avif 1280w, ${import.meta.env.BASE_URL}IMG/Cloud%20with%20earth-1584.avif 1584w`}
+          sizes="100vw"
+        />
+        <source
+          type="image/webp"
+          srcSet={`${import.meta.env.BASE_URL}IMG/Cloud%20with%20earth-768.webp 768w, ${import.meta.env.BASE_URL}IMG/Cloud%20with%20earth-1280.webp 1280w, ${import.meta.env.BASE_URL}IMG/Cloud%20with%20earth-1584.webp 1584w`}
+          sizes="100vw"
+        />
+        <img
+          ref={earthCloudRef}
+          src={`${import.meta.env.BASE_URL}IMG/Cloud%20with%20earth.png`}
+          alt=""
+          loading="lazy"
+          fetchPriority="low"
+          decoding="async"
+          width={1584}
+          height={1184}
+          className="w-full h-full select-none absolute inset-0"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center center",
+            transformOrigin: "center center",
+            opacity: 0,
+            display: "none",
+            willChange: "transform, filter, opacity",
+          }}
+        />
+      </picture>
 
       {/* 3. Footer Light Scene (Fades in at Skills section through footer) */}
-      <img
-        ref={footerLightRef}
-        src={`${import.meta.env.BASE_URL}IMG/Footer Light.png`}
-        alt=""
-        loading="eager"
-        fetchPriority="high"
-        decoding="async"
-        className="w-full h-full select-none absolute inset-0"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "center center",
-          transformOrigin: "center center",
-          opacity: 0,
-          display: "none",
-          willChange: "transform, opacity",
-        }}
-      />
+      <picture style={{ display: "contents" }}>
+        <source
+          type="image/avif"
+          srcSet={`${import.meta.env.BASE_URL}IMG/Footer%20Light-768.avif 768w, ${import.meta.env.BASE_URL}IMG/Footer%20Light-1280.avif 1280w, ${import.meta.env.BASE_URL}IMG/Footer%20Light-1672.avif 1672w`}
+          sizes="100vw"
+        />
+        <source
+          type="image/webp"
+          srcSet={`${import.meta.env.BASE_URL}IMG/Footer%20Light-768.webp 768w, ${import.meta.env.BASE_URL}IMG/Footer%20Light-1280.webp 1280w, ${import.meta.env.BASE_URL}IMG/Footer%20Light-1672.webp 1672w`}
+          sizes="100vw"
+        />
+        <img
+          ref={footerLightRef}
+          src={`${import.meta.env.BASE_URL}IMG/Footer%20Light.png`}
+          alt=""
+          loading="lazy"
+          fetchPriority="low"
+          decoding="async"
+          width={1672}
+          height={1184}
+          className="w-full h-full select-none absolute inset-0"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center center",
+            transformOrigin: "center center",
+            opacity: 0,
+            display: "none",
+            willChange: "transform, opacity",
+          }}
+        />
+      </picture>
 
       {/* Floating & Passing Panoramic Clouds Container */}
       <div
@@ -991,14 +1048,28 @@ function LightSkyParallax() {
           }}
         >
           <div style={{ animation: "featherFloatA 16s ease-in-out infinite", willChange: "transform" }}>
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Clouds_3.png`}
-              alt=""
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none opacity-80"
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_3-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Clouds_3-500.avif 500w, ${import.meta.env.BASE_URL}IMG/Clouds_3-640.avif 640w`}
+                sizes="clamp(270px, 27vw, 460px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_3-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Clouds_3-500.webp 500w, ${import.meta.env.BASE_URL}IMG/Clouds_3-640.webp 640w`}
+                sizes="clamp(270px, 27vw, 460px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Clouds_3.png`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={720}
+                height={504}
+                className="w-full h-auto object-contain select-none opacity-80"
+              />
+            </picture>
           </div>
         </div>
 
@@ -1016,14 +1087,28 @@ function LightSkyParallax() {
           }}
         >
           <div style={{ animation: "featherFloatB 19s ease-in-out infinite", willChange: "transform" }}>
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Clouds_2.png`}
-              alt=""
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none opacity-85"
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_2-320.avif 320w, ${import.meta.env.BASE_URL}IMG/Clouds_2-440.avif 440w, ${import.meta.env.BASE_URL}IMG/Clouds_2-540.avif 540w`}
+                sizes="clamp(250px, 25vw, 420px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_2-320.webp 320w, ${import.meta.env.BASE_URL}IMG/Clouds_2-440.webp 440w, ${import.meta.env.BASE_URL}IMG/Clouds_2-540.webp 540w`}
+                sizes="clamp(250px, 25vw, 420px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Clouds_2.png`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={720}
+                height={504}
+                className="w-full h-auto object-contain select-none opacity-85"
+              />
+            </picture>
           </div>
         </div>
 
@@ -1041,14 +1126,28 @@ function LightSkyParallax() {
           }}
         >
           <div style={{ animation: "featherFloatC 18s ease-in-out infinite", willChange: "transform" }}>
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Clouds_3.png`}
-              alt=""
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none opacity-82"
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_3-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Clouds_3-500.avif 500w, ${import.meta.env.BASE_URL}IMG/Clouds_3-640.avif 640w`}
+                sizes="clamp(290px, 29vw, 480px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_3-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Clouds_3-500.webp 500w, ${import.meta.env.BASE_URL}IMG/Clouds_3-640.webp 640w`}
+                sizes="clamp(290px, 29vw, 480px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Clouds_3.png`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={720}
+                height={504}
+                className="w-full h-auto object-contain select-none opacity-82"
+              />
+            </picture>
           </div>
         </div>
 
@@ -1066,14 +1165,28 @@ function LightSkyParallax() {
           }}
         >
           <div style={{ animation: "featherFloatD 15s ease-in-out infinite", willChange: "transform" }}>
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Clouds_2.png`}
-              alt=""
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none opacity-88"
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_2-320.avif 320w, ${import.meta.env.BASE_URL}IMG/Clouds_2-440.avif 440w, ${import.meta.env.BASE_URL}IMG/Clouds_2-540.avif 540w`}
+                sizes="clamp(240px, 24vw, 400px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_2-320.webp 320w, ${import.meta.env.BASE_URL}IMG/Clouds_2-440.webp 440w, ${import.meta.env.BASE_URL}IMG/Clouds_2-540.webp 540w`}
+                sizes="clamp(240px, 24vw, 400px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Clouds_2.png`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={720}
+                height={504}
+                className="w-full h-auto object-contain select-none opacity-88"
+              />
+            </picture>
           </div>
         </div>
 
@@ -1091,14 +1204,28 @@ function LightSkyParallax() {
           }}
         >
           <div style={{ animation: "featherFloatA 17.5s ease-in-out infinite", willChange: "transform" }}>
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Cloud_5.png`}
-              alt=""
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none opacity-85"
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Cloud_5-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Cloud_5-540.avif 540w, ${import.meta.env.BASE_URL}IMG/Cloud_5-720.avif 720w`}
+                sizes="clamp(260px, 26vw, 440px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Cloud_5-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Cloud_5-540.webp 540w, ${import.meta.env.BASE_URL}IMG/Cloud_5-720.webp 720w`}
+                sizes="clamp(260px, 26vw, 440px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Cloud_5.png`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={720}
+                height={504}
+                className="w-full h-auto object-contain select-none opacity-85"
+              />
+            </picture>
           </div>
         </div>
 
@@ -1127,19 +1254,33 @@ function LightSkyParallax() {
               transformStyle: "preserve-3d",
             }}
           >
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Astronaut_Skateboard_Light.png`}
-              alt="Astronaut on skateboard"
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none"
-              style={{
-                backfaceVisibility: "hidden",
-                WebkitBackfaceVisibility: "hidden",
-                transform: "translateZ(0)",
-              }}
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Astronaut_Skateboard_Light-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Astronaut_Skateboard_Light-540.avif 540w, ${import.meta.env.BASE_URL}IMG/Astronaut_Skateboard_Light-960.avif 960w`}
+                sizes="clamp(252px, 25.2vw, 410px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Astronaut_Skateboard_Light-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Astronaut_Skateboard_Light-540.webp 540w, ${import.meta.env.BASE_URL}IMG/Astronaut_Skateboard_Light-960.webp 960w`}
+                sizes="clamp(252px, 25.2vw, 410px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Astronaut_Skateboard_Light.png`}
+                alt="Astronaut on skateboard"
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={960}
+                height={1440}
+                className="w-full h-auto object-contain select-none"
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "translateZ(0)",
+                }}
+              />
+            </picture>
           </div>
         </div>
 
@@ -1159,14 +1300,28 @@ function LightSkyParallax() {
           }}
         >
           <div style={{ animation: "featherFloatA 17s ease-in-out infinite", willChange: "transform" }}>
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Clouds_1.png`}
-              alt=""
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none opacity-92"
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_1-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Clouds_1-480.avif 480w, ${import.meta.env.BASE_URL}IMG/Clouds_1-600.avif 600w`}
+                sizes="clamp(260px, 26vw, 440px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_1-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Clouds_1-480.webp 480w, ${import.meta.env.BASE_URL}IMG/Clouds_1-600.webp 600w`}
+                sizes="clamp(260px, 26vw, 440px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Clouds_1.png`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={720}
+                height={504}
+                className="w-full h-auto object-contain select-none opacity-92"
+              />
+            </picture>
           </div>
         </div>
 
@@ -1184,14 +1339,28 @@ function LightSkyParallax() {
           }}
         >
           <div style={{ animation: "featherFloatD 15s ease-in-out infinite", willChange: "transform" }}>
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Clouds_4.png`}
-              alt=""
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none opacity-90"
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_4-240.avif 240w, ${import.meta.env.BASE_URL}IMG/Clouds_4-320.avif 320w`}
+                sizes="clamp(210px, 21vw, 340px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_4-240.webp 240w, ${import.meta.env.BASE_URL}IMG/Clouds_4-320.webp 320w`}
+                sizes="clamp(210px, 21vw, 340px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Clouds_4.png`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={720}
+                height={504}
+                className="w-full h-auto object-contain select-none opacity-90"
+              />
+            </picture>
           </div>
         </div>
 
@@ -1210,14 +1379,28 @@ function LightSkyParallax() {
           }}
         >
           <div style={{ animation: "featherFloatB 18s ease-in-out infinite", willChange: "transform" }}>
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Clouds_1.png`}
-              alt=""
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none opacity-94"
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_1-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Clouds_1-480.avif 480w, ${import.meta.env.BASE_URL}IMG/Clouds_1-600.avif 600w`}
+                sizes="clamp(280px, 28vw, 460px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_1-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Clouds_1-480.webp 480w, ${import.meta.env.BASE_URL}IMG/Clouds_1-600.webp 600w`}
+                sizes="clamp(280px, 28vw, 460px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Clouds_1.png`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={720}
+                height={504}
+                className="w-full h-auto object-contain select-none opacity-94"
+              />
+            </picture>
           </div>
         </div>
 
@@ -1235,14 +1418,28 @@ function LightSkyParallax() {
           }}
         >
           <div style={{ animation: "featherFloatC 16s ease-in-out infinite", willChange: "transform" }}>
-            <img
-              src={`${import.meta.env.BASE_URL}IMG/Clouds_4.png`}
-              alt=""
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-auto object-contain select-none opacity-90"
-            />
+            <picture style={{ display: "contents" }}>
+              <source
+                type="image/avif"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_4-240.avif 240w, ${import.meta.env.BASE_URL}IMG/Clouds_4-320.avif 320w`}
+                sizes="clamp(220px, 22vw, 360px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${import.meta.env.BASE_URL}IMG/Clouds_4-240.webp 240w, ${import.meta.env.BASE_URL}IMG/Clouds_4-320.webp 320w`}
+                sizes="clamp(220px, 22vw, 360px)"
+              />
+              <img
+                src={`${import.meta.env.BASE_URL}IMG/Clouds_4.png`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                width={720}
+                height={504}
+                className="w-full h-auto object-contain select-none opacity-90"
+              />
+            </picture>
           </div>
         </div>
 
@@ -1254,8 +1451,13 @@ function LightSkyParallax() {
 
 const initialThemeMode = (): ThemeMode => {
   if (typeof window !== "undefined") {
+    const urlTheme = new URLSearchParams(window.location.search).get("theme");
+    if (urlTheme === "light" || urlTheme === "dark") return urlTheme;
     const saved = localStorage.getItem("theme_mode") || localStorage.getItem("adopt_theme_mode");
     if (saved === "light" || saved === "dark") return saved;
+    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
   }
   return "light";
 };
@@ -1388,6 +1590,10 @@ export default function App() {
         position: "relative",
       }}
     >
+      <a href="#main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+
       {/* Dynamic Animated Cosmic Gradient Background (Dark mode only) */}
       {!isLight && (
         <div className="cosmic-gradient-bg hide-in-light fade-with-theme">
@@ -1408,7 +1614,7 @@ export default function App() {
         onToggleTheme={toggleThemeMode}
         onNavigateVibeCoding={() => navigate("vibe-coding")}
       />
-      <main className="portfolio-main" style={{ position: "relative", zIndex: 1 }}>
+      <main id="main-content" tabIndex={-1} className="portfolio-main" style={{ position: "relative", zIndex: 1, outline: "none" }}>
         <Hero mode={themeMode} />
         <WorkSection
           onPlaybookOpen={() => navigate("adopt-landing")}
