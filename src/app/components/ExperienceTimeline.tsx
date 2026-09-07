@@ -294,7 +294,7 @@ function TimelineEntry({ entry, index }: { entry: Entry; index: number }) {
           <span style={{
             fontSize: entry.company === "Microsoft" ? "14px" : "12px", letterSpacing: "0.03em", whiteSpace: "nowrap",
             lineHeight: 1.2,
-            color: entry.company === "Microsoft" ? "var(--text-2)" : isOpened ? "var(--text-2)" : "var(--text-4)",
+            color: entry.company === "Microsoft" ? "var(--text-2)" : isOpened ? "var(--text-2)" : "var(--text-3)",
             transition: "color 0.35s",
           }}>
             {entry.period}

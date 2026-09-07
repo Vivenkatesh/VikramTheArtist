@@ -12,15 +12,14 @@
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
       <link rel="preconnect" href="https://api.fontshare.com" />
       <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
-      <!-- Preload critical hero background for immediate LCP -->
-      <link rel="preload" as="image" type="image/avif" href="./IMG/Landing_background-768.avif" media="(max-width: 768px)" />
-      <link rel="preload" as="image" type="image/avif" href="./IMG/Landing_background-1440.avif" media="(min-width: 769px)" />
-      <!-- Instant theme detection to prevent flash of wrong theme -->
+      <!-- Instant theme detection to prevent flash of wrong theme & preload correct hero assets -->
       <script>
         (function() {
           try {
+            var urlParams = new URLSearchParams(window.location.search);
+            var urlTheme = urlParams.get('theme');
             var saved = localStorage.getItem('theme_mode') || localStorage.getItem('adopt_theme_mode');
-            var mode = saved;
+            var mode = (urlTheme === 'light' || urlTheme === 'dark') ? urlTheme : saved;
             if (!mode) {
               mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             }
@@ -31,6 +30,12 @@
             } else {
               document.documentElement.classList.add('light');
               document.documentElement.classList.remove('dark');
+              var l = document.createElement('link');
+              l.rel = 'preload';
+              l.as = 'image';
+              l.type = 'image/avif';
+              l.href = window.innerWidth <= 768 ? './IMG/Landing_background-768.avif' : './IMG/Landing_background-1440.avif';
+              document.head.appendChild(l);
             }
           } catch(e) {}
         })();

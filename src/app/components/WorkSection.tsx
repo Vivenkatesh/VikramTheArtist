@@ -46,7 +46,7 @@ const projects: {
             alt="Driving Copilot Adoption"
             loading="lazy"
             decoding="async"
-            fetchPriority="low"
+            fetchPriority="auto"
             width={1087}
             height={1067}
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", opacity: 0.9 }}
@@ -78,7 +78,7 @@ const projects: {
             alt="Data Security"
             loading="lazy"
             decoding="async"
-            fetchPriority="low"
+            fetchPriority="auto"
             width={728}
             height={516}
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
@@ -270,7 +270,7 @@ const projects: {
             alt="Viva Engage Communities"
             loading="lazy"
             decoding="async"
-            fetchPriority="low"
+            fetchPriority="auto"
             width={728}
             height={540}
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
@@ -302,7 +302,7 @@ const projects: {
             alt="AI Powered Help-desk Experience"
             loading="lazy"
             decoding="async"
-            fetchPriority="low"
+            fetchPriority="auto"
             width={728}
             height={540}
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
@@ -337,7 +337,7 @@ const projects: {
             alt="Feedback 360"
             loading="lazy"
             decoding="async"
-            fetchPriority="low"
+            fetchPriority="auto"
             width={728}
             height={570}
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
@@ -369,7 +369,7 @@ const projects: {
             alt="Notification Experience Design"
             loading="lazy"
             decoding="async"
-            fetchPriority="low"
+            fetchPriority="auto"
             width={728}
             height={588}
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
@@ -397,17 +397,8 @@ function ProjectCard({
 }) {
   return (
     <div
-      className="project-card flex rounded-[40px] overflow-hidden transition-all duration-300"
+      className="project-card flex rounded-[40px] overflow-hidden"
       style={{
-        background: "rgba(0,0,0,0.45)",
-        backdropFilter: "blur(14px) saturate(1.8) brightness(1.06)",
-        WebkitBackdropFilter: "blur(14px) saturate(1.8) brightness(1.06)",
-        boxShadow: [
-          "inset 0 0 0 1px rgba(255,255,255,0.16)",
-          "0 8px 32px rgba(0,0,0,0.40)",
-          "inset 0 1.5px 1px rgba(255,255,255,0.52)",
-          "inset 0 -2px 5px rgba(0,0,0,0.28)",
-        ].join(", "),
         minHeight: "300px",
       }}
     >
@@ -638,107 +629,81 @@ export function WorkSection({
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-    const cards = Array.from(section.querySelectorAll<HTMLElement>(".ws-card"));
 
-    let ticking = false;
-    let cachedSectionTop = 0;
-    let cachedSectionHeight = 0;
-    let cardTops: number[] = [];
-
-    const measure = () => {
-      if (window.innerWidth < 768) return;
-      const rect = section.getBoundingClientRect();
-      cachedSectionTop = rect.top + window.scrollY;
-      cachedSectionHeight = rect.height;
-      cardTops = cards.map((c) => {
-        const cRect = c.getBoundingClientRect();
-        return cRect.top + window.scrollY;
-      });
-    };
-
-    measure();
-
-    const update = () => {
-      if (window.innerWidth < 768) return;
-      ticking = false;
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-      const sectionBottom = cachedSectionTop + cachedSectionHeight - scrollY;
-      const isPastSection = sectionBottom < vh * 0.55 - 100;
-
-      cards.forEach((card, i) => {
-        let coveredBy = 0;
-        for (let j = i + 1; j < cards.length; j++) {
-          const stickyThreshold = cardTops[j] ? cardTops[j] - (BASE_TOP + j * PEEK) : 0;
-          if (scrollY >= stickyThreshold - 4) coveredBy++;
-        }
-        const scale = Math.max(0.90, 1 - coveredBy * 0.025);
-
-        card.style.transform = isPastSection
-          ? `translate3d(0, -260px, 0) scale(${scale})`
-          : `translate3d(0, 0, 0) scale(${scale})`;
-        card.style.transformOrigin = "top center";
-      });
-    };
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(update);
-    };
-
-    const onResize = () => {
-      measure();
-      onScroll();
-    };
-
-    const onVisibilityChange = () => {
-      if (!document.hidden) {
-        onScroll();
+    // Helper to ensure image loading and verify readiness before async decoding
+    const preloadCardImage = (el: HTMLElement) => {
+      const img = el.querySelector<HTMLImageElement>("img");
+      if (!img) return;
+      if (img.loading === "lazy") {
+        img.loading = "eager";
+      }
+      if ("decode" in img) {
+        // If already completed and ready, skip redundant decode
+        if (img.complete && img.naturalWidth > 0) return;
+        img.decode().catch(() => {});
       }
     };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize, { passive: true });
-    document.addEventListener("visibilitychange", onVisibilityChange);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
 
     // Observe elements to reveal on scroll / smooth entrance
     const revealElements = section.querySelectorAll<HTMLElement>(".work-reveal-header, .work-reveal-card");
     
     if (typeof window !== "undefined" && "IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(
+      // 1. Vertical Observer with top (200px) and bottom (400px) margins for upward and downward scrolling
+      const verticalObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.classList.add("is-revealed");
+              preloadCardImage(entry.target as HTMLElement);
             }
           });
         },
         {
           root: null,
-          rootMargin: "0px 0px -40px 0px",
-          threshold: 0.05,
+          rootMargin: "200px 0px 400px 0px",
+          threshold: 0.01,
         }
       );
 
-      revealElements.forEach((el) => observer.observe(el));
+      revealElements.forEach((el) => verticalObserver.observe(el));
+
+      // 2. Mobile Horizontal Carousel Observer (scoped to horizontal scroll container)
+      let horizontalObserver: IntersectionObserver | null = null;
+      const slider = mobileSliderRef.current;
+      if (slider) {
+        const mobileCards = slider.querySelectorAll<HTMLElement>(".work-reveal-card");
+        // Immediately ensure the first two mobile cards are preloaded on mount
+        if (mobileCards[0]) preloadCardImage(mobileCards[0]);
+        if (mobileCards[1]) preloadCardImage(mobileCards[1]);
+
+        horizontalObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-revealed");
+                preloadCardImage(entry.target as HTMLElement);
+              }
+            });
+          },
+          {
+            root: slider,
+            rootMargin: "0px 400px 0px 400px",
+            threshold: 0.01,
+          }
+        );
+
+        mobileCards.forEach((c) => horizontalObserver!.observe(c));
+      }
 
       return () => {
-        observer.disconnect();
+        verticalObserver.disconnect();
+        if (horizontalObserver) horizontalObserver.disconnect();
       };
     } else {
-      revealElements.forEach((el) => el.classList.add("is-revealed"));
+      revealElements.forEach((el) => {
+        el.classList.add("is-revealed");
+        preloadCardImage(el);
+      });
     }
   }, []);
 
@@ -848,10 +813,7 @@ export function WorkSection({
               key={p.title}
               className="w-[82vw] max-w-[325px] shrink-0 snap-start"
             >
-              <div
-                className="work-reveal-card"
-                style={{ transitionDelay: `${0.06 + i * 0.1}s` }}
-              >
+              <div className="work-reveal-card">
                 <ProjectCard
                   {...p}
                   onInternalCta={handleCtaAction}
@@ -925,14 +887,9 @@ export function WorkSection({
               top: `${BASE_TOP + i * PEEK}px`,
               zIndex: i + 1,
               marginBottom: "20px",
-              willChange: "transform",
-              transition: "transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
             }}
           >
-            <div
-              className="work-reveal-card"
-              style={{ transitionDelay: `${0.08 + i * 0.12}s` }}
-            >
+            <div className="work-reveal-card">
               <ProjectCard
                 {...p}
                 onInternalCta={handleCtaAction}

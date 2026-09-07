@@ -235,9 +235,11 @@ function EarthParallax({ mode = "dark" }: { mode?: ThemeMode }) {
         if (exitTrigger > 0) {
           astro.style.transform = `translate3d(50px, -65vh, 0) translateY(-50%) rotate(8deg)`;
           astro.style.opacity = "0";
+          astro.style.display = "none";
           if (standLayer) standLayer.style.opacity = "0";
           if (floatLayer) floatLayer.style.opacity = "1";
         } else {
+          astro.style.display = "block";
           const dist = Math.abs(exitTrigger);
           const entranceDistance = vh * 0.85;
           const entranceProgress = Math.min(1, dist / entranceDistance);
@@ -251,10 +253,8 @@ function EarthParallax({ mode = "dark" }: { mode?: ThemeMode }) {
           let curX = startX + (0 - startX) * easedEntrance;
           let curRot = startRot + (0 - startRot) * easedEntrance;
 
-          const clientsEl = document.getElementById("clients");
-          const footerEl = document.getElementById("contact");
-          const footerRelativeTop = footerEl ? footerEl.getBoundingClientRect().top : (cachedFooterTop ? cachedFooterTop - scrollY : vh * 2);
-          const clientsRelativeTop = clientsEl ? clientsEl.getBoundingClientRect().top : (cachedClientsTop ? cachedClientsTop - scrollY : vh * 2);
+          const footerRelativeTop = cachedFooterTop ? cachedFooterTop - scrollY : vh * 2;
+          const clientsRelativeTop = cachedClientsTop ? cachedClientsTop - scrollY : vh * 2;
 
           // Size progression: starts at compact flight size (0.68) in earlier sections.
           // After crossing "Top customers I worked for", progressively scales up to 1.0 to match the standing astronaut
@@ -432,9 +432,50 @@ function EarthParallax({ mode = "dark" }: { mode?: ThemeMode }) {
     };
     el.addEventListener("load", onLoad, { once: true });
 
+    // Invalidate cached offsets on font loading
+    if (typeof document !== "undefined" && document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        measureCards();
+        compute(window.scrollY);
+      }).catch(() => {});
+    }
+
+    // Invalidate cached offsets when layout changes (e.g. experience disclosure expansion, dynamic accordions)
+    let roRaf = 0;
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof window !== "undefined" && "ResizeObserver" in window) {
+      resizeObserver = new ResizeObserver(() => {
+        if (roRaf) cancelAnimationFrame(roRaf);
+        roRaf = requestAnimationFrame(() => {
+          roRaf = 0;
+          measureCards();
+          compute(window.scrollY);
+        });
+      });
+      resizeObserver.observe(document.body);
+    }
+
+    // Invalidate cached offsets on theme changes
+    let themeObserver: MutationObserver | null = null;
+    if (typeof window !== "undefined" && "MutationObserver" in window) {
+      themeObserver = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          if (m.type === "attributes" && m.attributeName === "data-theme") {
+            measureCards();
+            compute(window.scrollY);
+            break;
+          }
+        }
+      });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    }
+
     compute(window.scrollY);
     return () => {
       if (rafId) cancelAnimationFrame(rafId);
+      if (roRaf) cancelAnimationFrame(roRaf);
+      if (resizeObserver) resizeObserver.disconnect();
+      if (themeObserver) themeObserver.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibilityChange);
@@ -735,6 +776,27 @@ function LightSkyParallax() {
     let currentMouseX = 0;
     let currentMouseY = 0;
 
+    let cachedLastCardDocTop = 0;
+    let cachedAboutDocTop = 0;
+    let cachedSkillsDocTop = 0;
+
+    const measureOffsets = () => {
+      const cards = document.querySelectorAll<HTMLElement>(".ws-card");
+      if (cards.length > 0) {
+        const lastCard = cards[cards.length - 1];
+        cachedLastCardDocTop = lastCard.getBoundingClientRect().top + window.scrollY;
+      }
+      const aboutEl = document.getElementById("about");
+      if (aboutEl) {
+        cachedAboutDocTop = aboutEl.getBoundingClientRect().top + window.scrollY;
+      }
+      const skillsEl = document.getElementById("skills");
+      if (skillsEl) {
+        cachedSkillsDocTop = skillsEl.getBoundingClientRect().top + window.scrollY;
+      }
+    };
+    measureOffsets();
+
     const update = () => {
       currentScroll += (targetScroll - currentScroll) * 0.14;
       if (Math.abs(targetScroll - currentScroll) < 0.1) {
@@ -746,30 +808,22 @@ function LightSkyParallax() {
 
       const s = currentScroll;
 
-      // Measure the last card in My Work ("Notification Experience Design")
       // Transition is delayed through all preceding cards; it starts only as the last card in My Work is reached/cleared
-      const cards = Array.from(document.querySelectorAll<HTMLElement>(".ws-card"));
       let workExitProgress = 0;
-
-      if (cards.length > 0) {
-        const lastCard = cards[cards.length - 1];
-        const rect = lastCard.getBoundingClientRect();
-        // The last card is in position when rect.top <= 180px.
-        // As user scrolls past the last card, transition activates smoothly over 420px of scroll
+      if (cachedLastCardDocTop) {
+        const lastCardTop = cachedLastCardDocTop - s;
         const triggerPoint = 180;
-        if (rect.top <= triggerPoint) {
-          workExitProgress = Math.min(Math.max((triggerPoint - rect.top) / 420, 0), 1);
+        if (lastCardTop <= triggerPoint) {
+          workExitProgress = Math.min(Math.max((triggerPoint - lastCardTop) / 420, 0), 1);
         }
       } else {
-        // Fallback if cards not yet rendered: start transition around s = 1800px
         workExitProgress = Math.min(Math.max((s - 1800) / 420, 0), 1);
       }
 
       const easedTransition = 1 - Math.pow(1 - workExitProgress, 2.4);
 
       // 1. Hero Background Sky: Stays fully crisp & active through Hero and all My Work cards;
-      // Only after the last card ("Notification Experience Design") does it slowly blur out and fade
-      const heroBlur = easedTransition * 18;
+      // Only after the last card ("Notification Experience Design") does it slowly fade out
       const heroScale = 1.06 - Math.min(s / 1800, 1) * 0.06;
       const heroPanY = -Math.min(s / 1800, 1) * 28 + currentMouseY * 8;
       const heroPanX = currentMouseX * 10;
@@ -777,29 +831,28 @@ function LightSkyParallax() {
 
       if (img) {
         img.style.transform = `translate3d(${heroPanX.toFixed(2)}px, ${heroPanY.toFixed(2)}px, 0) scale(${heroScale.toFixed(4)})`;
-        img.style.filter = heroBlur > 0.1 ? `blur(${heroBlur.toFixed(1)}px)` : "none";
+        img.style.filter = "none";
         img.style.opacity = heroOpacity.toFixed(3);
+        img.style.display = heroOpacity <= 0.005 ? "none" : "block";
       }
 
       // Check About Section for fading out moving clouds container
       let aboutProgress = 0;
-      const aboutEl = document.getElementById("about");
-      if (aboutEl) {
-        const rect = aboutEl.getBoundingClientRect();
+      if (cachedAboutDocTop) {
+        const aboutTop = cachedAboutDocTop - s;
         const triggerPoint = window.innerHeight * 0.82;
-        if (rect.top <= triggerPoint) {
-          aboutProgress = Math.min(Math.max((triggerPoint - rect.top) / 300, 0), 1);
+        if (aboutTop <= triggerPoint) {
+          aboutProgress = Math.min(Math.max((triggerPoint - aboutTop) / 300, 0), 1);
         }
       }
 
       // Check Skills Section: Only after user scrolls to Skills section, Cloud with Earth fades out and Footer Light fades in
       let skillsProgress = 0;
-      const skillsEl = document.getElementById("skills");
-      if (skillsEl) {
-        const rect = skillsEl.getBoundingClientRect();
+      if (cachedSkillsDocTop) {
+        const skillsTop = cachedSkillsDocTop - s;
         const triggerPoint = window.innerHeight * 0.40;
-        if (rect.top <= triggerPoint) {
-          skillsProgress = Math.min(Math.max((triggerPoint - rect.top) / 320, 0), 1);
+        if (skillsTop <= triggerPoint) {
+          skillsProgress = Math.min(Math.max((triggerPoint - skillsTop) / 320, 0), 1);
         }
       }
       const easedSkills = 1 - Math.pow(1 - skillsProgress, 2.4);
@@ -837,7 +890,7 @@ function LightSkyParallax() {
         const cloudOpacity = Math.max(0, 1 - aboutProgress * 1.25);
         cloudsGroup.style.opacity = cloudOpacity.toFixed(3);
         cloudsGroup.style.display = cloudOpacity <= 0.01 ? "none" : "block";
-        cloudsGroup.style.filter = aboutProgress > 0.05 ? `blur(${(aboutProgress * 8).toFixed(1)}px)` : "none";
+        cloudsGroup.style.filter = "none";
       }
 
       // 5. Skater Astronaut (Midground): Authentic S-Curved Slalom Skating Path + Interactive Cursor Movement
@@ -869,8 +922,13 @@ function LightSkyParallax() {
       const astroOpacity = Number((1 - Math.pow(fadeProgress, 1.4)).toFixed(3));
 
       if (astro) {
-        astro.style.transform = `translate3d(${moveX.toFixed(2)}px, ${moveY.toFixed(2)}px, 0) scale(${scale.toFixed(4)}) rotate(${tilt.toFixed(2)}deg)`;
-        astro.style.opacity = String(astroOpacity);
+        if (astroOpacity <= 0) {
+          astro.style.display = "none";
+        } else {
+          astro.style.display = "block";
+          astro.style.transform = `translate3d(${moveX.toFixed(2)}px, ${moveY.toFixed(2)}px, 0) scale(${scale.toFixed(4)}) rotate(${tilt.toFixed(2)}deg)`;
+          astro.style.opacity = String(astroOpacity);
+        }
       }
 
       const isScrollMoving = Math.abs(targetScroll - currentScroll) >= 0.1;
@@ -902,14 +960,63 @@ function LightSkyParallax() {
       }
     };
 
+    const onResize = () => {
+      measureOffsets();
+      update();
+    };
+
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
+
+    // Invalidate cached offsets on font loading
+    if (typeof document !== "undefined" && document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        measureOffsets();
+        update();
+      }).catch(() => {});
+    }
+
+    // Invalidate cached offsets when layout changes (e.g. experience disclosure expansion)
+    let roRaf = 0;
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof window !== "undefined" && "ResizeObserver" in window) {
+      resizeObserver = new ResizeObserver(() => {
+        if (roRaf) cancelAnimationFrame(roRaf);
+        roRaf = requestAnimationFrame(() => {
+          roRaf = 0;
+          measureOffsets();
+          update();
+        });
+      });
+      resizeObserver.observe(document.body);
+    }
+
+    // Invalidate cached offsets on theme changes
+    let themeObserver: MutationObserver | null = null;
+    if (typeof window !== "undefined" && "MutationObserver" in window) {
+      themeObserver = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          if (m.type === "attributes" && m.attributeName === "data-theme") {
+            measureOffsets();
+            update();
+            break;
+          }
+        }
+      });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    }
+
     update();
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("resize", onResize);
       if (rafId) cancelAnimationFrame(rafId);
+      if (roRaf) cancelAnimationFrame(roRaf);
+      if (resizeObserver) resizeObserver.disconnect();
+      if (themeObserver) themeObserver.disconnect();
     };
   }, []);
 
@@ -1488,6 +1595,13 @@ export default function App() {
   // Apply the selected theme mode globally
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", themeMode);
+    if (themeMode === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
   }, [themeMode]);
 
   const navigate = useCallback((next: Route) => {

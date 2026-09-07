@@ -49,6 +49,7 @@ function StarCanvas() {
   useEffect(() => {
     let animId = 0;
     const resize = () => {
+      if (document.documentElement.getAttribute("data-theme") === "light") return;
       const w = window.innerWidth;
       const h = Math.round(window.innerHeight * 1.4);
       if (canvasRef1.current) {
@@ -78,15 +79,28 @@ function StarCanvas() {
 
   useEffect(() => {
     const onScroll = () => {
+      if (document.documentElement.getAttribute("data-theme") === "light") return;
       if (rafRef.current) return;
       rafRef.current = requestAnimationFrame(() => {
         rafRef.current = 0;
+        if (document.documentElement.getAttribute("data-theme") === "light") return;
         const scrollY = window.scrollY;
+        const pastHero = scrollY > window.innerHeight * 1.2;
         if (canvasRef1.current) {
-          canvasRef1.current.style.transform = `translate3d(0, ${-scrollY * 0.05}px, 0)`;
+          if (pastHero) {
+            canvasRef1.current.style.display = "none";
+          } else {
+            canvasRef1.current.style.display = "block";
+            canvasRef1.current.style.transform = `translate3d(0, ${-scrollY * 0.05}px, 0)`;
+          }
         }
         if (canvasRef2.current) {
-          canvasRef2.current.style.transform = `translate3d(0, ${-scrollY * 0.16}px, 0)`;
+          if (pastHero) {
+            canvasRef2.current.style.display = "none";
+          } else {
+            canvasRef2.current.style.display = "block";
+            canvasRef2.current.style.transform = `translate3d(0, ${-scrollY * 0.16}px, 0)`;
+          }
         }
       });
     };
@@ -101,6 +115,7 @@ function StarCanvas() {
     <>
       <canvas
         ref={canvasRef1}
+        className="hero-star-canvas"
         style={{
           position: "fixed",
           top: "-20%",
@@ -114,6 +129,7 @@ function StarCanvas() {
       />
       <canvas
         ref={canvasRef2}
+        className="hero-star-canvas"
         style={{
           position: "fixed",
           top: "-20%",
