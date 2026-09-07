@@ -148,7 +148,9 @@ function EarthParallax({ mode = "dark" }: { mode?: ThemeMode }) {
       } else {
         cachedFooterTop = document.documentElement.scrollHeight - window.innerHeight;
       }
-      const cards = Array.from(document.querySelectorAll<HTMLElement>(".ws-card"));
+      const cards = Array.from(document.querySelectorAll<HTMLElement>(".ws-card")).filter(
+        (c) => c.offsetParent !== null
+      );
       cachedCardsCount = cards.length;
       if (cards.length >= 3) {
         hasCards = true;
@@ -222,9 +224,9 @@ function EarthParallax({ mode = "dark" }: { mode?: ThemeMode }) {
 
       const card3Top      = cachedCard3Top - scrollY;
       const lastTop       = cachedLastCardTop - scrollY;
-      const lastStickyTop = 96 + (cachedCardsCount - 1) * 22;
 
       const stickTrigger = card3Top + cachedCard3Height / 2 - vh / 2;
+      const lastStickyTop = 96 + Math.max(0, cachedCardsCount - 1) * 24;
       const exitTrigger  = lastTop - lastStickyTop;
 
       // Astronaut scroll-driven descent when last card exits, and dramatic landing in footer

@@ -1,10 +1,6 @@
-import { ReactNode, useRef, useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ReactNode, useRef, useEffect, useState, useCallback } from "react";
 import adoptThumb from "@/assets/img/Adopt_Thumb.png";
 
-/* px each stacked card peeks below the previous; BASE_TOP = where card 0 sticks */
-const PEEK     = 22;   // px
-const BASE_TOP = 96;   // px below viewport top (clears the fixed nav)
 const PLAYBOOK_PASSWORD = "designtoimproveworld";
 const PLAYBOOK_LINK = "https://www.figma.com/deck/vGd7lTFMt1PeMQTr7dcz7l/ADOPT?node-id=1-125042&t=0hOVNm0DbUaw8jaK-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1";
 
@@ -388,20 +384,140 @@ function ProjectCard({
   ctas,
   thumb,
   onInternalCta,
+  isPrototype = true,
 }: {
   title: string;
   description: string;
   ctas: CTA[];
   thumb: ReactNode;
   onInternalCta?: (cta: CTA) => void;
+  isPrototype?: boolean;
 }) {
+  const cardRef = useRef<HTMLElement>(null);
+  const rectRef = useRef<DOMRect | null>(null);
+  const rafRef = useRef<number>(0);
+  const latestCoords = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const reducedMotionRef = useRef<boolean>(false);
+  const hasHoverRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const mqHover = window.matchMedia("(hover: hover) and (pointer: fine)");
+      hasHoverRef.current = mqHover.matches;
+      const hoverHandler = (e: MediaQueryListEvent) => {
+        hasHoverRef.current = e.matches;
+      };
+      mqHover.addEventListener("change", hoverHandler);
+
+      const mqMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      reducedMotionRef.current = mqMotion.matches;
+      const motionHandler = (e: MediaQueryListEvent) => {
+        reducedMotionRef.current = e.matches;
+      };
+      mqMotion.addEventListener("change", motionHandler);
+
+      return () => {
+        mqHover.removeEventListener("change", hoverHandler);
+        mqMotion.removeEventListener("change", motionHandler);
+      };
+    }
+    const card = cardRef.current;
+    if (card) {
+      card.style.setProperty("--gloss", "0");
+      card.style.setProperty("--rx", "0deg");
+      card.style.setProperty("--ry", "0deg");
+    }
+  }, []);
+
+  const handlePointerEnter = useCallback((e: React.PointerEvent<HTMLElement>) => {
+    if (!isPrototype || !hasHoverRef.current || e.pointerType === "touch") return;
+    const card = cardRef.current;
+    if (card) {
+      card.style.transition = "box-shadow 0.4s ease";
+      rectRef.current = card.getBoundingClientRect();
+      if (!reducedMotionRef.current) {
+        card.style.setProperty("--gloss", "0.85");
+      }
+    }
+  }, [isPrototype]);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLElement>) => {
+    if (!isPrototype || !hasHoverRef.current || e.pointerType === "touch") return;
+    const card = cardRef.current;
+    if (!card) return;
+
+    if (!rectRef.current) {
+      rectRef.current = card.getBoundingClientRect();
+    }
+    const rect = rectRef.current;
+    if (!rect || rect.width === 0 || rect.height === 0) return;
+
+    latestCoords.current = { x: e.clientX, y: e.clientY };
+
+    if (!rafRef.current) {
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = 0;
+        const currentCard = cardRef.current;
+        const currentRect = rectRef.current;
+        if (!currentCard || !currentRect) return;
+
+        if (!reducedMotionRef.current) {
+          const { x, y } = latestCoords.current;
+          const px = Math.max(0, Math.min(1, (x - currentRect.left) / currentRect.width));
+          const py = Math.max(0, Math.min(1, (y - currentRect.top) / currentRect.height));
+
+          currentCard.style.setProperty("--mx", `${(px * 100).toFixed(1)}%`);
+          currentCard.style.setProperty("--my", `${(py * 100).toFixed(1)}%`);
+          currentCard.style.setProperty("--gloss", "0.85");
+
+          const MAX_TILT = 5; // Restrained tilt for elegant portfolio presentation
+          const rx = ((px - 0.5) * MAX_TILT * 2).toFixed(2) + "deg";
+          const ry = (-(py - 0.5) * MAX_TILT * 2).toFixed(2) + "deg";
+          currentCard.style.setProperty("--rx", rx);
+          currentCard.style.setProperty("--ry", ry);
+        }
+      });
+    }
+  }, [isPrototype]);
+
+  const handlePointerLeave = useCallback(() => {
+    if (!isPrototype || !hasHoverRef.current) return;
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+    }
+    rectRef.current = null;
+    const card = cardRef.current;
+    if (card) {
+      card.style.transition = "transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 0.4s ease";
+      card.style.setProperty("--gloss", "0");
+      card.style.setProperty("--rx", "0deg");
+      card.style.setProperty("--ry", "0deg");
+    }
+  }, [isPrototype]);
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+      }
+    };
+  }, []);
+
   return (
-    <div
-      className="project-card flex rounded-[40px] overflow-hidden"
+    <article
+      ref={cardRef}
+      onPointerEnter={handlePointerEnter}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      className={`project-card ${isPrototype ? "project-glass-prototype" : ""} flex rounded-[40px] overflow-hidden w-full`}
       style={{
+        width: "100%",
         minHeight: "300px",
       }}
     >
+      {isPrototype && <div className="lg-spec" aria-hidden="true" />}
       {/* Left: text content */}
       <div
         className="project-card-text flex flex-col justify-between"
@@ -528,7 +644,7 @@ function ProjectCard({
       >
         {thumb}
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -545,11 +661,6 @@ export function WorkSection({
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [pendingProtectedLink, setPendingProtectedLink] = useState<string>("");
-
-  const [activeMobileSlide, setActiveMobileSlide] = useState(0);
-  const mobileSliderRef = useRef<HTMLDivElement>(null);
-
   const openPasswordModal = (link: string) => {
     setPasswordInput("");
     setPasswordError("");
@@ -606,55 +717,19 @@ export function WorkSection({
     openPasswordModal(cta.href);
   };
 
-  const handleMobileScroll = () => {
-    const el = mobileSliderRef.current;
-    if (!el) return;
-    const scrollLeft = el.scrollLeft;
-    const firstChild = el.firstElementChild as HTMLElement | null;
-    const cardWidth = firstChild ? firstChild.offsetWidth + 16 : el.clientWidth;
-    const activeIndex = Math.round(scrollLeft / cardWidth);
-    setActiveMobileSlide(Math.min(Math.max(0, activeIndex), projects.length - 1));
-  };
-
-  const scrollToMobileSlide = (index: number) => {
-    const el = mobileSliderRef.current;
-    if (!el) return;
-    const targetChild = el.children[index] as HTMLElement | undefined;
-    if (targetChild) {
-      targetChild.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
-    }
-    setActiveMobileSlide(index);
-  };
-
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
-    // Helper to ensure image loading and verify readiness before async decoding
-    const preloadCardImage = (el: HTMLElement) => {
-      const img = el.querySelector<HTMLImageElement>("img");
-      if (!img) return;
-      if (img.loading === "lazy") {
-        img.loading = "eager";
-      }
-      if ("decode" in img) {
-        // If already completed and ready, skip redundant decode
-        if (img.complete && img.naturalWidth > 0) return;
-        img.decode().catch(() => {});
-      }
-    };
-
-    // Observe elements to reveal on scroll / smooth entrance
-    const revealElements = section.querySelectorAll<HTMLElement>(".work-reveal-header, .work-reveal-card");
+    // Observe header elements to reveal on scroll / smooth entrance
+    const revealElements = section.querySelectorAll<HTMLElement>(".work-reveal-header");
     
     if (typeof window !== "undefined" && "IntersectionObserver" in window) {
-      // 1. Vertical Observer with top (200px) and bottom (400px) margins for upward and downward scrolling
-      const verticalObserver = new IntersectionObserver(
+      const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.classList.add("is-revealed");
-              preloadCardImage(entry.target as HTMLElement);
             }
           });
         },
@@ -665,44 +740,14 @@ export function WorkSection({
         }
       );
 
-      revealElements.forEach((el) => verticalObserver.observe(el));
-
-      // 2. Mobile Horizontal Carousel Observer (scoped to horizontal scroll container)
-      let horizontalObserver: IntersectionObserver | null = null;
-      const slider = mobileSliderRef.current;
-      if (slider) {
-        const mobileCards = slider.querySelectorAll<HTMLElement>(".work-reveal-card");
-        // Immediately ensure the first two mobile cards are preloaded on mount
-        if (mobileCards[0]) preloadCardImage(mobileCards[0]);
-        if (mobileCards[1]) preloadCardImage(mobileCards[1]);
-
-        horizontalObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("is-revealed");
-                preloadCardImage(entry.target as HTMLElement);
-              }
-            });
-          },
-          {
-            root: slider,
-            rootMargin: "0px 400px 0px 400px",
-            threshold: 0.01,
-          }
-        );
-
-        mobileCards.forEach((c) => horizontalObserver!.observe(c));
-      }
+      revealElements.forEach((el) => observer.observe(el));
 
       return () => {
-        verticalObserver.disconnect();
-        if (horizontalObserver) horizontalObserver.disconnect();
+        observer.disconnect();
       };
     } else {
       revealElements.forEach((el) => {
         el.classList.add("is-revealed");
-        preloadCardImage(el);
       });
     }
   }, []);
@@ -734,7 +779,7 @@ export function WorkSection({
       `}</style>
 
       {/* Light Mode Work Header */}
-      <div className="work-reveal-header hidden [data-theme='light']_:block mb-10 text-left w-full">
+      <div className="work-reveal-header show-in-light mb-10 text-left w-full">
         <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#64748b] mb-2" style={{ letterSpacing: "0.16em", fontFamily: "'Inter', sans-serif" }}>
           SELECTED WORK
         </p>
@@ -746,7 +791,7 @@ export function WorkSection({
       {/* Dark Mode Clickable Heading + Jumping Arrow */}
       <div
         data-no-sparkle="true"
-        className="work-reveal-header [data-theme='light']_:hidden no-sparkle work-header-block flex flex-col items-center justify-center cursor-pointer select-none mb-8 sm:mb-12 group"
+        className="work-reveal-header hide-in-light no-sparkle work-header-block flex flex-col items-center justify-center cursor-pointer select-none mb-8 sm:mb-12 group"
         onClick={(e) => {
           e.stopPropagation();
           const firstCard = document.querySelector(".ws-card");
@@ -793,114 +838,46 @@ export function WorkSection({
         </div>
       </div>
 
-      {/* ── Mobile Version: Horizontal Swipe Slider (md:hidden) ── */}
-      <div className="block md:hidden relative w-full pb-6 px-0">
-        {/* Carousel Track */}
-        <div
-          ref={mobileSliderRef}
-          onScroll={handleMobileScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory gap-3.5 pl-4 pr-12 pb-3 pt-1 scrollbar-none w-full"
-          style={{
-            WebkitOverflowScrolling: "touch",
-            scrollSnapType: "x mandatory",
-            scrollBehavior: "smooth",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-        >
-          {projects.map((p, i) => (
-            <div
-              key={p.title}
-              className="w-[82vw] max-w-[325px] shrink-0 snap-start"
-            >
-              <div className="work-reveal-card">
-                <ProjectCard
-                  {...p}
-                  onInternalCta={handleCtaAction}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Mobile Pagination & Navigation Bar */}
-        <div className="flex items-center justify-between px-6 mt-4">
-          {/* Pagination Indicators */}
-          <div className="flex items-center gap-1">
-            {projects.map((_, idx) => (
-              <button
-                key={idx}
-                type="button"
-                aria-label={`Go to slide ${idx + 1}`}
-                aria-current={activeMobileSlide === idx ? "true" : undefined}
-                onClick={() => scrollToMobileSlide(idx)}
-                className="min-w-[44px] min-h-[44px] flex items-center justify-center -mx-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-full"
-              >
-                <span
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    activeMobileSlide === idx
-                      ? "w-7 bg-white shadow-xs"
-                      : "w-2 bg-white/30 hover:bg-white/50"
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
-
-          {/* Counter & Arrow Controls */}
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-mono text-white/50">
-              <span className="text-white font-medium">{activeMobileSlide + 1}</span> / {projects.length}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                aria-label="Previous work"
-                disabled={activeMobileSlide === 0}
-                onClick={() => scrollToMobileSlide(activeMobileSlide - 1)}
-                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                type="button"
-                aria-label="Next work"
-                disabled={activeMobileSlide === projects.length - 1}
-                onClick={() => scrollToMobileSlide(activeMobileSlide + 1)}
-                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* ── Desktop & Tablet Version: Sticky Card Stack (hidden md:flex) ── */}
-      <div className="hidden md:flex flex-col">
+      <div className="hidden md:flex flex-col relative w-full">
         {projects.map((p, i) => (
           <div
             key={p.title}
-            className="ws-card"
+            className="ws-card w-full"
             style={{
               position: "sticky",
-              top: `${BASE_TOP + i * PEEK}px`,
+              top: `${96 + i * 24}px`,
               zIndex: i + 1,
               marginBottom: "20px",
             }}
           >
-            <div className="work-reveal-card">
-              <ProjectCard
-                {...p}
-                onInternalCta={handleCtaAction}
-              />
-            </div>
+            <ProjectCard
+              {...p}
+              isPrototype={true}
+              onInternalCta={handleCtaAction}
+            />
           </div>
         ))}
       </div>
 
-      {/* Spacer — brief pause at the fully-stacked state before the next section */}
+      {/* Spacer — pause at fully-stacked state before the next section */}
       <div className="hidden md:block" style={{ height: "80px" }} />
+
+      {/* ── Mobile Version: Normal page scrolling vertical list (flex md:hidden) ── */}
+      <div className="flex md:hidden flex-col gap-8 w-full px-4 sm:px-6">
+        {projects.map((p) => (
+          <div
+            key={p.title}
+            className="ws-card-mobile w-full"
+          >
+            <ProjectCard
+              {...p}
+              isPrototype={true}
+              onInternalCta={handleCtaAction}
+            />
+          </div>
+        ))}
+      </div>
 
       {showPasswordModal && (
         <div

@@ -417,28 +417,35 @@ body {
 }
 
 /* Project cards: Opaque foreground surface preventing bleed-through with rich depth */
+/* Project cards: Opaque foreground surface preventing bleed-through with rich depth */
 .project-card {
+  position: relative;
+  isolation: isolate;
+  width: 100% !important;
   background: #0d121f !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: 40px !important;
   box-shadow:
     0 24px 50px -12px rgba(0, 0, 0, 0.75),
     0 4px 16px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  will-change: transform;
+  transition: box-shadow 0.4s ease;
+  overflow: hidden;
 }
 
 [data-theme="light"] .project-card {
   background: #ffffff !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
   border: 1px solid rgba(15, 23, 42, 0.09) !important;
   border-radius: 40px !important;
   box-shadow:
     0 24px 50px -12px rgba(99, 102, 241, 0.14),
     0 4px 18px rgba(15, 23, 42, 0.05),
     inset 0 1.5px 1px rgba(255, 255, 255, 1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 [data-theme="light"] .project-card:hover {
@@ -446,6 +453,133 @@ body {
     0 28px 60px -10px rgba(99, 102, 241, 0.22),
     0 8px 24px rgba(15, 23, 42, 0.06),
     inset 0 1.5px 1px rgba(255, 255, 255, 1) !important;
+}
+
+/* ── Liquid Glass Card Treatment (Adapted from Reference) ── */
+.project-glass-prototype {
+  --tint: #0d121f;
+  --mx: 50%;
+  --my: 30%;
+  --gloss: 0;
+  --rx: 0deg;
+  --ry: 0deg;
+
+  position: relative;
+  isolation: isolate;
+  width: 100% !important;
+  background: #0d121f !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow:
+    0 24px 50px -12px rgba(0, 0, 0, 0.75),
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 40px !important;
+  will-change: transform;
+  transition: box-shadow 0.4s ease;
+  overflow: hidden;
+}
+
+.project-glass-prototype .project-card-text {
+  position: relative;
+  z-index: 3;
+}
+
+.project-glass-prototype .project-card-thumb {
+  position: relative;
+  z-index: 3;
+}
+
+/* Light Theme Styling for Glass */
+[data-theme="light"] .project-glass-prototype,
+[data-theme="light"] .project-card.project-glass-prototype {
+  --tint: #ffffff;
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.09) !important;
+  box-shadow:
+    0 24px 50px -12px rgba(99, 102, 241, 0.14),
+    0 4px 18px rgba(15, 23, 42, 0.05),
+    inset 0 1.5px 1px rgba(255, 255, 255, 1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+
+[data-theme="light"] .project-glass-prototype .project-card-title,
+[data-theme="light"] .project-glass-prototype h3 {
+  color: #070e24 !important;
+  text-shadow: none !important;
+}
+
+[data-theme="light"] .project-glass-prototype p {
+  color: #334155 !important;
+  text-shadow: none !important;
+}
+
+/* Diagonal Specular Sheen (matching .lg-01__spec from reference) */
+.project-glass-prototype .lg-spec {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.16) 46%, transparent 62%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+[data-theme="light"] .project-glass-prototype .lg-spec {
+  background: linear-gradient(120deg, transparent 25%, rgba(255, 255, 255, 0.35) 45%, transparent 65%);
+}
+
+/* Radial Pointer Spotlight Highlight (matching ::before from reference) */
+.project-glass-prototype::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(340px 340px at var(--mx, 50%) var(--my, 30%), rgba(255, 255, 255, 0.40), rgba(255, 255, 255, 0) 65%);
+  opacity: var(--gloss, 0);
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+[data-theme="light"] .project-glass-prototype::before {
+  background: radial-gradient(340px 340px at var(--mx, 50%) var(--my, 30%), rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0) 65%);
+}
+
+/* Hover tilt and shadow on devices with fine pointer */
+@media (hover: hover) and (pointer: fine) {
+  .project-glass-prototype {
+    transform: perspective(1100px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg));
+  }
+
+  .project-glass-prototype:hover {
+    box-shadow:
+      0 36px 70px -24px rgba(0, 0, 0, 0.72),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55) !important;
+  }
+
+  [data-theme="light"] .project-glass-prototype:hover {
+    box-shadow:
+      0 30px 65px -18px rgba(99, 102, 241, 0.22),
+      0 8px 24px rgba(15, 23, 42, 0.06),
+      inset 0 1.5px 0 rgba(255, 255, 255, 1) !important;
+  }
+}
+
+/* Reduced motion support: disable tilt and pointer spotlight */
+@media (prefers-reduced-motion: reduce) {
+  .project-glass-prototype {
+    transform: none !important;
+    transition: box-shadow 0.2s ease !important;
+  }
+  .project-glass-prototype::before {
+    display: none !important;
+  }
+  .project-glass-prototype .lg-spec {
+    display: none !important;
+  }
 }
 
 [data-theme="light"] .project-card .project-card-title,
@@ -493,6 +627,56 @@ body {
 /* Timeline spine */
 [data-theme="light"] .tl-spine {
   background: linear-gradient(to bottom, rgba(15,20,30,0.02) 0%, rgba(15,20,30,0.14) 12%, rgba(15,20,30,0.14) 88%, rgba(15,20,30,0.02) 100%) !important;
+}
+
+/* Subtle, feathered background softening behind timeline reading area in light mode (no visible panel border) */
+.experience-glass-panel {
+  position: relative;
+  transition: background 0.3s ease;
+}
+
+[data-theme="light"] .experience-glass-panel {
+  background: radial-gradient(ellipse 80% 75% at center, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.35) 55%, rgba(255, 255, 255, 0) 100%) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 48px !important;
+  padding: 44px 24px !important;
+  mask-image: radial-gradient(ellipse 90% 85% at center, black 55%, transparent 100%) !important;
+  -webkit-mask-image: radial-gradient(ellipse 90% 85% at center, black 55%, transparent 100%) !important;
+}
+
+@media (max-width: 767px) {
+  [data-theme="light"] .experience-glass-panel {
+    padding: 24px 12px !important;
+    border-radius: 24px !important;
+  }
+}
+
+/* Subtle, feathered background softening behind about reading area in light mode (no visible panel border) */
+.about-glass-panel {
+  position: relative;
+  transition: background 0.3s ease;
+}
+
+[data-theme="light"] .about-glass-panel {
+  background: radial-gradient(ellipse 85% 75% at center, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.35) 55%, rgba(255, 255, 255, 0) 100%) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 48px !important;
+  padding: 40px 32px !important;
+  mask-image: radial-gradient(ellipse 92% 85% at center, black 55%, transparent 100%) !important;
+  -webkit-mask-image: radial-gradient(ellipse 92% 85% at center, black 55%, transparent 100%) !important;
+}
+
+@media (max-width: 767px) {
+  [data-theme="light"] .about-glass-panel {
+    padding: 24px 16px !important;
+    border-radius: 24px !important;
+  }
 }
 
 /* About-section badges — glass pills with theme-aware appearance */

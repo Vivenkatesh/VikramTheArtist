@@ -240,7 +240,7 @@ html, body {
     flex: none !important;
     width: calc(100% - 24px) !important;
     height: 190px !important;
-    margin: 12px 12px 0 12px !important;
+    margin: 12px 12px 14px 12px !important;
     border-radius: 20px !important;
     overflow: hidden !important;
   }
@@ -364,7 +364,7 @@ html, body {
     transform: translateX(-50%) !important;
   }
 
-  .tl-entry > div:first-child {
+  .tl-dark-layout > div:first-child {
     display: flex !important;
     align-items: flex-start !important;
   }
