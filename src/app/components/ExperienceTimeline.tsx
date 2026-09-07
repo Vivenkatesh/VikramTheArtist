@@ -251,17 +251,28 @@ function TimelineEntry({ entry, index }: { entry: Entry; index: number }) {
   return (
     <div
       className={`tl-entry tl-s${index} ${hovered ? "is-hovered" : ""}`}
+      role={hasDesc ? "button" : undefined}
+      tabIndex={hasDesc ? 0 : undefined}
+      aria-expanded={hasDesc ? isOpened : undefined}
+      aria-controls={hasDesc ? `tl-desc-${index}` : undefined}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      onClick={() => setHovered(!hovered)}
+      onClick={() => hasDesc && setHovered(!hovered)}
+      onKeyDown={(e) => {
+        if (hasDesc && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          setHovered(!hovered);
+        }
+      }}
       style={{
         padding: "14px 20px",
         borderRadius: "14px",
         position: "relative",
         cursor: hasDesc ? "pointer" : "default",
         transition: "background 0.25s ease",
+        outline: "none",
       }}
     >
       {/* ── Main row ── */}
@@ -283,7 +294,7 @@ function TimelineEntry({ entry, index }: { entry: Entry; index: number }) {
           <span style={{
             fontSize: entry.company === "Microsoft" ? "14px" : "12px", letterSpacing: "0.03em", whiteSpace: "nowrap",
             lineHeight: 1.2,
-            color: entry.company === "Microsoft" ? "var(--text-2)" : isOpened ? "var(--text-2)" : "var(--text-4)",
+            color: entry.company === "Microsoft" ? "var(--text-2)" : isOpened ? "var(--text-2)" : "var(--text-3)",
             transition: "color 0.35s",
           }}>
             {entry.period}
@@ -293,11 +304,11 @@ function TimelineEntry({ entry, index }: { entry: Entry; index: number }) {
             <span style={{
               display: "inline-flex", alignItems: "center", gap: "4px",
               fontSize: "8.5px", letterSpacing: "0.12em", textTransform: "uppercase",
-              color: entry.accentColor, fontWeight: 600,
+              color: "var(--accent-current, #005da6)", fontWeight: 600,
             }}>
               <span className="tl-blink-dot" style={{
                 display: "inline-block", width: "5px", height: "5px",
-                borderRadius: "50%", background: entry.accentColor,
+                borderRadius: "50%", background: "var(--accent-current, #005da6)",
               }} />
               May 2025 • Current
             </span>
@@ -369,7 +380,7 @@ function TimelineEntry({ entry, index }: { entry: Entry; index: number }) {
 
       {/* ── Expandable description ── */}
       {hasDesc && (
-        <div className="tl-desc-wrapper">
+        <div id={`tl-desc-${index}`} className="tl-desc-wrapper" aria-hidden={!isOpened}>
           <div className="tl-desc-inner" style={{ display: "flex" }}>
             {/* Spacer aligns content under right column on desktop */}
             <div className="tl-desc-spacer" style={{ flex: "0 0 calc(50% + 2px)", flexShrink: 0 }} />
@@ -415,8 +426,12 @@ export function ExperienceTimeline() {
           transition: background 0.25s ease;
         }
         .tl-entry:hover,
-        .tl-entry.is-hovered {
-          background: rgba(255, 255, 255, 0.025);
+        .tl-entry.is-hovered,
+        .tl-entry:focus-visible {
+          background: rgba(255, 255, 255, 0.04);
+        }
+        .tl-entry:focus-visible {
+          box-shadow: 0 0 0 2px #3b82f6;
         }
 
         .tl-desc-wrapper {
@@ -429,7 +444,8 @@ export function ExperienceTimeline() {
           overflow: hidden;
         }
         .tl-entry:hover .tl-desc-wrapper,
-        .tl-entry.is-hovered .tl-desc-wrapper {
+        .tl-entry.is-hovered .tl-desc-wrapper,
+        .tl-entry:focus-visible .tl-desc-wrapper {
           grid-template-rows: 1fr;
           opacity: 1;
         }
@@ -437,14 +453,16 @@ export function ExperienceTimeline() {
           transition: transform 0.35s ease;
         }
         .tl-entry:hover .tl-logo-box,
-        .tl-entry.is-hovered .tl-logo-box {
+        .tl-entry.is-hovered .tl-logo-box,
+        .tl-entry:focus-visible .tl-logo-box {
           transform: scale(1.07) translateX(-2px);
         }
         .tl-entry .tl-dot-sphere {
           transition: box-shadow 0.35s ease, transform 0.35s ease, background 0.35s ease;
         }
         .tl-entry:hover .tl-dot-sphere,
-        .tl-entry.is-hovered .tl-dot-sphere {
+        .tl-entry.is-hovered .tl-dot-sphere,
+        .tl-entry:focus-visible .tl-dot-sphere {
           transform: scale(1.15);
         }
       `}</style>

@@ -5,6 +5,141 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 
 const configs = [
+  // ── Heavy Scenery Assets ──
+  {
+    input: 'public/IMG/Landing_background.png',
+    widths: [768, 1440, 1586],
+    avifQ: 68,
+    webpQ: 80,
+    outDir: 'public/IMG',
+    baseName: 'Landing_background'
+  },
+  {
+    input: 'public/IMG/Cloud with earth.png',
+    widths: [768, 1280, 1584],
+    avifQ: 68,
+    webpQ: 80,
+    outDir: 'public/IMG',
+    baseName: 'Cloud with earth'
+  },
+  {
+    input: 'public/IMG/Footer Light.png',
+    widths: [768, 1280, 1672],
+    avifQ: 68,
+    webpQ: 80,
+    outDir: 'public/IMG',
+    baseName: 'Footer Light'
+  },
+  {
+    input: 'public/IMG/Astronaut_Skateboard_Light.png',
+    widths: [360, 540, 720, 960],
+    avifQ: 72,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Astronaut_Skateboard_Light'
+  },
+  {
+    input: 'public/IMG/Astronaut_Standing.png',
+    widths: [480, 768, 1024],
+    avifQ: 72,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Astronaut_Standing'
+  },
+
+  // ── Work Project Cards ──
+  {
+    input: 'src/assets/img/Adopt_Thumb.png',
+    widths: [480, 800, 1087],
+    avifQ: 68,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Adopt_Thumb'
+  },
+  {
+    input: 'public/IMG/Data Security_Card.png',
+    widths: [360, 540, 728],
+    avifQ: 68,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Data Security_Card'
+  },
+  {
+    input: 'public/IMG/Communities.png',
+    widths: [360, 540, 728],
+    avifQ: 70,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Communities'
+  },
+  {
+    input: 'public/IMG/Helpdesk_Card.png',
+    widths: [360, 540, 728],
+    avifQ: 68,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Helpdesk_Card'
+  },
+  {
+    input: 'public/IMG/feedback_Card.png',
+    widths: [360, 540, 728],
+    avifQ: 68,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'feedback_Card'
+  },
+  {
+    input: 'public/IMG/Notification_Card.png',
+    widths: [360, 540, 728],
+    avifQ: 68,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Notification_Card'
+  },
+
+  // ── Scenery Clouds ──
+  {
+    input: 'public/IMG/Cloud_5.png',
+    widths: [360, 540, 720],
+    avifQ: 70,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Cloud_5'
+  },
+  {
+    input: 'public/IMG/Clouds_1.png',
+    widths: [360, 480, 600],
+    avifQ: 70,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Clouds_1'
+  },
+  {
+    input: 'public/IMG/Clouds_2.png',
+    widths: [320, 440, 540],
+    avifQ: 70,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Clouds_2'
+  },
+  {
+    input: 'public/IMG/Clouds_3.png',
+    widths: [360, 500, 640],
+    avifQ: 70,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Clouds_3'
+  },
+  {
+    input: 'public/IMG/Clouds_4.png',
+    widths: [240, 320],
+    avifQ: 70,
+    webpQ: 82,
+    outDir: 'public/IMG',
+    baseName: 'Clouds_4'
+  },
+
+  // ── Dark Mode Planetary & Space Imagery ──
   {
     input: 'public/IMG/Space.png',
     widths: [768, 1440, 2560],
@@ -44,54 +179,6 @@ const configs = [
     webpQ: 84,
     outDir: 'public/IMG',
     baseName: 'Astronaut'
-  },
-  {
-    input: 'src/assets/img/Adopt_Thumb.png',
-    widths: [480, 800, 1087],
-    avifQ: 68,
-    webpQ: 82,
-    outDir: 'public/IMG',
-    baseName: 'Adopt_Thumb'
-  },
-  {
-    input: 'public/IMG/Data Security_Card.png',
-    widths: [360, 540, 728],
-    avifQ: 68,
-    webpQ: 82,
-    outDir: 'public/IMG',
-    baseName: 'Data Security_Card'
-  },
-  {
-    input: 'public/IMG/Communities.png',
-    widths: [365],
-    avifQ: 70,
-    webpQ: 84,
-    outDir: 'public/IMG',
-    baseName: 'Communities'
-  },
-  {
-    input: 'public/IMG/Helpdesk_Card.png',
-    widths: [360, 540, 728],
-    avifQ: 68,
-    webpQ: 82,
-    outDir: 'public/IMG',
-    baseName: 'Helpdesk_Card'
-  },
-  {
-    input: 'public/IMG/feedback_Card.png',
-    widths: [360, 540, 728],
-    avifQ: 68,
-    webpQ: 82,
-    outDir: 'public/IMG',
-    baseName: 'feedback_Card'
-  },
-  {
-    input: 'public/IMG/Notification_Card.png',
-    widths: [360, 540, 728],
-    avifQ: 68,
-    webpQ: 82,
-    outDir: 'public/IMG',
-    baseName: 'Notification_Card'
   },
   {
     input: 'public/IMG/Top customers.png',

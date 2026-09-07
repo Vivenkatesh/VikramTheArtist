@@ -30,11 +30,8 @@ export function SkillsSection() {
       </h2>
       <div className="flex flex-wrap justify-center gap-2">
         {skills.map((skill) => (
-          <a
+          <span
             key={skill}
-            href={`https://www.google.com/search?q=${encodeURIComponent(skill)}`}
-            target="_blank"
-            rel="noopener noreferrer"
             className="skill-tag font-bold"
             style={{
               padding: "8px 20px",
@@ -42,11 +39,12 @@ export function SkillsSection() {
               fontFamily: "'Satoshi', sans-serif",
               fontWeight: 700,
               letterSpacing: "-0.3px",
-              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
             }}
           >
             {skill}
-          </a>
+          </span>
         ))}
         <span
           className="skill-tag cursor-pointer font-bold"

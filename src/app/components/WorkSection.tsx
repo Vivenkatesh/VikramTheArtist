@@ -46,7 +46,7 @@ const projects: {
             alt="Driving Copilot Adoption"
             loading="lazy"
             decoding="async"
-            fetchPriority="low"
+            fetchPriority="auto"
             width={1087}
             height={1067}
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", opacity: 0.9 }}
@@ -78,7 +78,7 @@ const projects: {
             alt="Data Security"
             loading="lazy"
             decoding="async"
-            fetchPriority="low"
+            fetchPriority="auto"
             width={728}
             height={516}
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
@@ -251,19 +251,31 @@ const projects: {
     title: "Viva Engage Communities",
     description:
       "Reimagine how Communities in Viva Engage can help us achieve local goals, foster deeper connections, and drive meaningful engagement.",
-    ctas: [{ label: "View more", href: "https://www.figma.com/deck/ELKvu1uZ9wBlg314EFdMVO/Communities-2.0--Hack?node-id=1-16&viewport=-101%2C-140%2C0.65&t=5MqLdsILtEH45MGQ-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1", internal: true }],
+    ctas: [{ label: "View Communities Case Study", href: "https://www.figma.com/deck/ELKvu1uZ9wBlg314EFdMVO/Communities-2.0--Hack?node-id=1-16&viewport=-101%2C-140%2C0.65&t=5MqLdsILtEH45MGQ-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1", internal: true }],
     thumb: (
       <div className="w-full h-full overflow-hidden rounded-xl">
-        <img
-          src={`${import.meta.env.BASE_URL}IMG/Communities.png`}
-          alt="Viva Engage Communities"
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          width={728}
-          height={540}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Communities-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Communities-540.avif 540w, ${import.meta.env.BASE_URL}IMG/Communities-728.avif 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <source
+            type="image/webp"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Communities-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Communities-540.webp 540w, ${import.meta.env.BASE_URL}IMG/Communities-728.webp 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <img
+            src={`${import.meta.env.BASE_URL}IMG/Communities.png`}
+            alt="Viva Engage Communities"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="auto"
+            width={728}
+            height={540}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          />
+        </picture>
       </div>
     ),
   },
@@ -271,19 +283,31 @@ const projects: {
     title: "AI Powered Help-desk Experience",
     description:
       "Redesign the help desk experience to self-serve & self-help for solving the technology needs through a predictive & personalised experience.",
-    ctas: [{ label: "View more", href: "https://docs.google.com/presentation/d/e/2PACX-1vQvENFUrPSpj9opoTOxY0pCLjRgFd63Jnu5Ps8BQa4SBmR6Tj_uToYbOo2EoOZS3Dj5kqW2d9gaSXrF/pub?start=false&loop=false&delayms=3000" }],
+    ctas: [{ label: "View Help-desk Case Study", href: "https://docs.google.com/presentation/d/e/2PACX-1vQvENFUrPSpj9opoTOxY0pCLjRgFd63Jnu5Ps8BQa4SBmR6Tj_uToYbOo2EoOZS3Dj5kqW2d9gaSXrF/pub?start=false&loop=false&delayms=3000" }],
     thumb: (
       <div className="w-full h-full overflow-hidden rounded-xl">
-        <img
-          src={`${import.meta.env.BASE_URL}IMG/Helpdesk_Card.png`}
-          alt="AI Powered Help-desk Experience"
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          width={728}
-          height={540}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Helpdesk_Card-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Helpdesk_Card-540.avif 540w, ${import.meta.env.BASE_URL}IMG/Helpdesk_Card-728.avif 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <source
+            type="image/webp"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Helpdesk_Card-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Helpdesk_Card-540.webp 540w, ${import.meta.env.BASE_URL}IMG/Helpdesk_Card-728.webp 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <img
+            src={`${import.meta.env.BASE_URL}IMG/Helpdesk_Card.png`}
+            alt="AI Powered Help-desk Experience"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="auto"
+            width={728}
+            height={540}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          />
+        </picture>
       </div>
     ),
   },
@@ -297,16 +321,28 @@ const projects: {
     ],
     thumb: (
       <div className="w-full h-full overflow-hidden rounded-xl">
-        <img
-          src={`${import.meta.env.BASE_URL}IMG/feedback_Card.png`}
-          alt="Feedback 360"
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          width={728}
-          height={570}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={`${import.meta.env.BASE_URL}IMG/feedback_Card-360.avif 360w, ${import.meta.env.BASE_URL}IMG/feedback_Card-540.avif 540w, ${import.meta.env.BASE_URL}IMG/feedback_Card-728.avif 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <source
+            type="image/webp"
+            srcSet={`${import.meta.env.BASE_URL}IMG/feedback_Card-360.webp 360w, ${import.meta.env.BASE_URL}IMG/feedback_Card-540.webp 540w, ${import.meta.env.BASE_URL}IMG/feedback_Card-728.webp 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <img
+            src={`${import.meta.env.BASE_URL}IMG/feedback_Card.png`}
+            alt="Feedback 360"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="auto"
+            width={728}
+            height={570}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          />
+        </picture>
       </div>
     ),
   },
@@ -314,19 +350,31 @@ const projects: {
     title: "Notification Experience Design",
     description:
       "Notification XD Playbook helps the product to proactively notify the on-going users problems and also allowing them to take necessary action through recommendations at any point in time.",
-    ctas: [{ label: "View more", href: "https://docs.google.com/presentation/d/10f2xETw-H17PE4fwk7_gnLniytWco4oBRpC-0JpCjNw/pub?start=false&loop=false&delayms=10000" }],
+    ctas: [{ label: "View Notification Playbook", href: "https://docs.google.com/presentation/d/10f2xETw-H17PE4fwk7_gnLniytWco4oBRpC-0JpCjNw/pub?start=false&loop=false&delayms=10000" }],
     thumb: (
       <div className="w-full h-full overflow-hidden rounded-xl">
-        <img
-          src={`${import.meta.env.BASE_URL}IMG/Notification_Card.png`}
-          alt="Notification Experience Design"
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          width={728}
-          height={588}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Notification_Card-360.avif 360w, ${import.meta.env.BASE_URL}IMG/Notification_Card-540.avif 540w, ${import.meta.env.BASE_URL}IMG/Notification_Card-728.avif 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <source
+            type="image/webp"
+            srcSet={`${import.meta.env.BASE_URL}IMG/Notification_Card-360.webp 360w, ${import.meta.env.BASE_URL}IMG/Notification_Card-540.webp 540w, ${import.meta.env.BASE_URL}IMG/Notification_Card-728.webp 728w`}
+            sizes="(max-width: 768px) 100vw, 450px"
+          />
+          <img
+            src={`${import.meta.env.BASE_URL}IMG/Notification_Card.png`}
+            alt="Notification Experience Design"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="auto"
+            width={728}
+            height={588}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          />
+        </picture>
       </div>
     ),
   },
@@ -349,17 +397,8 @@ function ProjectCard({
 }) {
   return (
     <div
-      className="project-card flex rounded-[40px] overflow-hidden transition-all duration-300"
+      className="project-card flex rounded-[40px] overflow-hidden"
       style={{
-        background: "rgba(0,0,0,0.45)",
-        backdropFilter: "blur(14px) saturate(1.8) brightness(1.06)",
-        WebkitBackdropFilter: "blur(14px) saturate(1.8) brightness(1.06)",
-        boxShadow: [
-          "inset 0 0 0 1px rgba(255,255,255,0.16)",
-          "0 8px 32px rgba(0,0,0,0.40)",
-          "inset 0 1.5px 1px rgba(255,255,255,0.52)",
-          "inset 0 -2px 5px rgba(0,0,0,0.28)",
-        ].join(", "),
         minHeight: "300px",
       }}
     >
@@ -590,107 +629,81 @@ export function WorkSection({
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-    const cards = Array.from(section.querySelectorAll<HTMLElement>(".ws-card"));
 
-    let ticking = false;
-    let cachedSectionTop = 0;
-    let cachedSectionHeight = 0;
-    let cardTops: number[] = [];
-
-    const measure = () => {
-      if (window.innerWidth < 768) return;
-      const rect = section.getBoundingClientRect();
-      cachedSectionTop = rect.top + window.scrollY;
-      cachedSectionHeight = rect.height;
-      cardTops = cards.map((c) => {
-        const cRect = c.getBoundingClientRect();
-        return cRect.top + window.scrollY;
-      });
-    };
-
-    measure();
-
-    const update = () => {
-      if (window.innerWidth < 768) return;
-      ticking = false;
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-      const sectionBottom = cachedSectionTop + cachedSectionHeight - scrollY;
-      const isPastSection = sectionBottom < vh * 0.55 - 100;
-
-      cards.forEach((card, i) => {
-        let coveredBy = 0;
-        for (let j = i + 1; j < cards.length; j++) {
-          const stickyThreshold = cardTops[j] ? cardTops[j] - (BASE_TOP + j * PEEK) : 0;
-          if (scrollY >= stickyThreshold - 4) coveredBy++;
-        }
-        const scale = Math.max(0.90, 1 - coveredBy * 0.025);
-
-        card.style.transform = isPastSection
-          ? `translate3d(0, -260px, 0) scale(${scale})`
-          : `translate3d(0, 0, 0) scale(${scale})`;
-        card.style.transformOrigin = "top center";
-      });
-    };
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(update);
-    };
-
-    const onResize = () => {
-      measure();
-      onScroll();
-    };
-
-    const onVisibilityChange = () => {
-      if (!document.hidden) {
-        onScroll();
+    // Helper to ensure image loading and verify readiness before async decoding
+    const preloadCardImage = (el: HTMLElement) => {
+      const img = el.querySelector<HTMLImageElement>("img");
+      if (!img) return;
+      if (img.loading === "lazy") {
+        img.loading = "eager";
+      }
+      if ("decode" in img) {
+        // If already completed and ready, skip redundant decode
+        if (img.complete && img.naturalWidth > 0) return;
+        img.decode().catch(() => {});
       }
     };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize, { passive: true });
-    document.addEventListener("visibilitychange", onVisibilityChange);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
 
     // Observe elements to reveal on scroll / smooth entrance
     const revealElements = section.querySelectorAll<HTMLElement>(".work-reveal-header, .work-reveal-card");
     
     if (typeof window !== "undefined" && "IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(
+      // 1. Vertical Observer with top (200px) and bottom (400px) margins for upward and downward scrolling
+      const verticalObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.classList.add("is-revealed");
+              preloadCardImage(entry.target as HTMLElement);
             }
           });
         },
         {
           root: null,
-          rootMargin: "0px 0px -40px 0px",
-          threshold: 0.05,
+          rootMargin: "200px 0px 400px 0px",
+          threshold: 0.01,
         }
       );
 
-      revealElements.forEach((el) => observer.observe(el));
+      revealElements.forEach((el) => verticalObserver.observe(el));
+
+      // 2. Mobile Horizontal Carousel Observer (scoped to horizontal scroll container)
+      let horizontalObserver: IntersectionObserver | null = null;
+      const slider = mobileSliderRef.current;
+      if (slider) {
+        const mobileCards = slider.querySelectorAll<HTMLElement>(".work-reveal-card");
+        // Immediately ensure the first two mobile cards are preloaded on mount
+        if (mobileCards[0]) preloadCardImage(mobileCards[0]);
+        if (mobileCards[1]) preloadCardImage(mobileCards[1]);
+
+        horizontalObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-revealed");
+                preloadCardImage(entry.target as HTMLElement);
+              }
+            });
+          },
+          {
+            root: slider,
+            rootMargin: "0px 400px 0px 400px",
+            threshold: 0.01,
+          }
+        );
+
+        mobileCards.forEach((c) => horizontalObserver!.observe(c));
+      }
 
       return () => {
-        observer.disconnect();
+        verticalObserver.disconnect();
+        if (horizontalObserver) horizontalObserver.disconnect();
       };
     } else {
-      revealElements.forEach((el) => el.classList.add("is-revealed"));
+      revealElements.forEach((el) => {
+        el.classList.add("is-revealed");
+        preloadCardImage(el);
+      });
     }
   }, []);
 
@@ -800,10 +813,7 @@ export function WorkSection({
               key={p.title}
               className="w-[82vw] max-w-[325px] shrink-0 snap-start"
             >
-              <div
-                className="work-reveal-card"
-                style={{ transitionDelay: `${0.06 + i * 0.1}s` }}
-              >
+              <div className="work-reveal-card">
                 <ProjectCard
                   {...p}
                   onInternalCta={handleCtaAction}
@@ -816,19 +826,24 @@ export function WorkSection({
         {/* Mobile Pagination & Navigation Bar */}
         <div className="flex items-center justify-between px-6 mt-4">
           {/* Pagination Indicators */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {projects.map((_, idx) => (
               <button
                 key={idx}
                 type="button"
                 aria-label={`Go to slide ${idx + 1}`}
+                aria-current={activeMobileSlide === idx ? "true" : undefined}
                 onClick={() => scrollToMobileSlide(idx)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  activeMobileSlide === idx
-                    ? "w-7 bg-white shadow-xs"
-                    : "w-2 bg-white/30 hover:bg-white/50"
-                }`}
-              />
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center -mx-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-full"
+              >
+                <span
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    activeMobileSlide === idx
+                      ? "w-7 bg-white shadow-xs"
+                      : "w-2 bg-white/30 hover:bg-white/50"
+                  }`}
+                />
+              </button>
             ))}
           </div>
 
@@ -843,18 +858,18 @@ export function WorkSection({
                 aria-label="Previous work"
                 disabled={activeMobileSlide === 0}
                 onClick={() => scrollToMobileSlide(activeMobileSlide - 1)}
-                className="w-8 h-8 rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 type="button"
                 aria-label="Next work"
                 disabled={activeMobileSlide === projects.length - 1}
                 onClick={() => scrollToMobileSlide(activeMobileSlide + 1)}
-                className="w-8 h-8 rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-white/15 bg-white/5 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-white active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -872,14 +887,9 @@ export function WorkSection({
               top: `${BASE_TOP + i * PEEK}px`,
               zIndex: i + 1,
               marginBottom: "20px",
-              willChange: "transform",
-              transition: "transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
             }}
           >
-            <div
-              className="work-reveal-card"
-              style={{ transitionDelay: `${0.08 + i * 0.12}s` }}
-            >
+            <div className="work-reveal-card">
               <ProjectCard
                 {...p}
                 onInternalCta={handleCtaAction}

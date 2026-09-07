@@ -1,6 +1,27 @@
+import { useEffect, useRef, useState } from "react";
+
 export function FooterCTA() {
+  const footerRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = footerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <footer
+      ref={footerRef}
       id="contact"
       className="relative text-center overflow-hidden"
       style={{ padding: "70px 0 100px" }}
@@ -19,7 +40,7 @@ export function FooterCTA() {
         }
 
         .footer-birds-layer .bird {
-          background-image: url('${import.meta.env.BASE_URL}IMG/bird-cells-new.svg'), url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/174479/bird-cells-new.svg');
+          background-image: url('${import.meta.env.BASE_URL}IMG/bird-cells-new.svg');
           background-size: auto 100%;
           width: 88px;
           height: 125px;
@@ -27,6 +48,17 @@ export function FooterCTA() {
           animation-name: fly-cycle;
           animation-timing-function: steps(10);
           animation-iteration-count: infinite;
+        }
+
+        .footer-birds-layer.paused .bird,
+        .footer-birds-layer.paused .bird-container {
+          animation-play-state: paused !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .footer-birds-layer {
+            display: none !important;
+          }
         }
 
         .footer-birds-layer .bird--one {
@@ -193,10 +225,25 @@ export function FooterCTA() {
             opacity: 0;
           }
         }
+
+        .footer-link {
+          color: #3b35eb;
+          text-decoration: underline;
+          text-underline-offset: 3px;
+          font-weight: 500;
+          transition: color 0.2s ease;
+        }
+        :root:not([data-theme="light"]) .footer-link,
+        html[data-theme="dark"] .footer-link {
+          color: #93c5fd;
+        }
+        .footer-link:hover {
+          opacity: 0.85;
+        }
       `}</style>
 
       {/* Animated Flying Birds Layer */}
-      <div className="footer-birds-layer">
+      <div className={`footer-birds-layer ${isVisible ? "" : "paused"}`}>
         <div className="bird-container bird-container--one">
           <div className="bird bird--one" />
         </div>
@@ -255,11 +302,7 @@ export function FooterCTA() {
             href="https://drive.google.com/file/d/1ksC8bHO8TmkG-wXNkcX1iVoBfTK7vnLo/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              color: "#433cf7",
-              textDecoration: "none",
-              fontWeight: 400,
-            }}
+            className="footer-link"
           >
             resume
           </a>
@@ -268,11 +311,7 @@ export function FooterCTA() {
             href="https://www.linkedin.com/in/vikramtheartist"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              color: "#433cf7",
-              textDecoration: "none",
-              fontWeight: 400,
-            }}
+            className="footer-link"
           >
             LinkedIn
           </a>
@@ -293,7 +332,7 @@ export function FooterCTA() {
           justifyContent: "space-between",
         }}
       >
-        <span style={{ color: "var(--text-4)", fontSize: "10px" }}>
+        <span style={{ color: "var(--text-3)", fontSize: "11px" }}>
           © {new Date().getFullYear()}
         </span>
       </div>
