@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { PlusCircle, ArrowUp, Mic } from "lucide-react";
-import { askGemini, ChatMessage, getStoredApiKey, setStoredApiKey } from "../utils/geminiClient";
+import { ArrowUp, Mic } from "lucide-react";
+import { askGemini, ChatMessage } from "../utils/geminiClient";
 
 interface GeminiPromptBarProps {
   mode: "dark" | "light";
@@ -150,6 +150,7 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const isLight = mode === "light";
   const isActive = isFocused || isOpen || isListening || inputVal.trim().length > 0;
@@ -158,6 +159,22 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
     : isListening || isFocused || inputVal.length > 0
     ? "listening"
     : "idle";
+
+  // Animate conic gradient angle smoothly on active without rotating element geometry
+  useEffect(() => {
+    if (!isActive) return;
+    let animId: number;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const deg = (((now - start) / 3500) % 1) * 360;
+      if (wrapperRef.current) {
+        wrapperRef.current.style.setProperty("--conic-angle", `${deg}deg`);
+      }
+      animId = requestAnimationFrame(tick);
+    };
+    animId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animId);
+  }, [isActive]);
 
   // Auto scroll messages to bottom
   useEffect(() => {
@@ -560,7 +577,7 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
         <CanvasWaveform state={waveState} activity={inputVal.length > 0 ? 1.2 : 1} isLight={isLight} />
 
         {/* Command Bar Wrapper with Rotating Conic Glow on Active */}
-        <div className="command-bar-wrapper">
+        <div ref={wrapperRef} className="command-bar-wrapper">
           {/* Active Conic Gradient Glow Layer (Exact AdoptIQ Glow Effect) */}
           {isActive && (
             <>
@@ -587,19 +604,6 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
             className={`command-bar ${isFocused || isActive ? "command-bar--focused" : ""}`}
             onClick={() => inputRef.current?.focus()}
           >
-            {/* Left Plus Circle Icon from AdoptIQ (zE in AdoptIQ) */}
-            <div
-              className="command-bar__plus"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(!isOpen);
-              }}
-              title="Open suggestions and AMA settings"
-              aria-label="Open suggestions"
-            >
-              <PlusCircle size={22} strokeWidth={1.8} />
-            </div>
-
             {/* Formatted Content: "Hi, I'm Vikram. Ask me anything." */}
             <div className="relative flex-1 flex items-center min-w-0 h-full">
               {!inputVal && (

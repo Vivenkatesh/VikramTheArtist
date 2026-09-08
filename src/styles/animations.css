@@ -124,7 +124,7 @@
 .command-bar {
   width: 100%;
   height: 68px;
-  padding: 0 12px 0 24px;
+  padding: 0 12px 0 28px;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -214,12 +214,18 @@
   box-shadow: none;
 }
 
-@keyframes conic-rotate {
+@property --conic-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes conic-angle-spin {
   0% {
-    transform: rotate(0deg);
+    --conic-angle: 0deg;
   }
   100% {
-    transform: rotate(360deg);
+    --conic-angle: 360deg;
   }
 }
 
@@ -227,7 +233,19 @@
   position: absolute;
   inset: -2px;
   border-radius: 999px;
-  background: conic-gradient(from 0deg, transparent 0%, rgba(244, 114, 182, 0) 5%, #f472b6 10%, #c084fc 18%, #818cf8 26%, #38bdf8 34%, #2dd4bf 42%, #fbbf24 46%, rgba(251, 191, 36, 0) 52%, transparent 56%);
-  animation: conic-rotate 3.5s linear infinite;
+  background: conic-gradient(
+    from var(--conic-angle, 0deg),
+    transparent 0%,
+    rgba(244, 114, 182, 0) 5%,
+    #f472b6 10%,
+    #c084fc 18%,
+    #818cf8 26%,
+    #38bdf8 34%,
+    #2dd4bf 42%,
+    #fbbf24 46%,
+    rgba(251, 191, 36, 0) 52%,
+    transparent 56%
+  );
+  animation: conic-angle-spin 3.5s linear infinite;
   pointer-events: none;
 }
