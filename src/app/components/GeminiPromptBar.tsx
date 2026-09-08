@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { PlusCircle, ArrowUp, Mic } from "lucide-react";
 import { askGemini, ChatMessage, getStoredApiKey, setStoredApiKey } from "../utils/geminiClient";
 
 interface GeminiPromptBarProps {
@@ -10,6 +11,131 @@ const SUGGESTION_CHIPS = [
   "Why did you create ADOPT?",
   "What inspires you?",
 ];
+
+/**
+ * CanvasWaveform: Exact high-DPI Siri/Gemini canvas ribbon wave component from AdoptIQ
+ */
+function CanvasWaveform({
+  state,
+  activity = 1,
+  isLight,
+}: {
+  state: "idle" | "listening" | "analyzing" | "submitting" | "results";
+  activity?: number;
+  isLight: boolean;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const stateRef = useRef(state);
+  const activityRef = useRef(activity);
+
+  useEffect(() => {
+    stateRef.current = state;
+    activityRef.current = activity;
+  }, [state, activity]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    let step = 0;
+    let currentAmp = 50;
+    let currentSpeed = 1;
+    const dpr = window.devicePixelRatio || 1;
+
+    const handleResize = () => {
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    const waves = [
+      { color: "rgba(192, 132, 252, 0.62)", speed: 0.032, shift: 0, freq: 2.8, ampMult: 1.15 },
+      { color: "rgba(59, 130, 246, 0.54)", speed: 0.045, shift: 2.1, freq: 2.4, ampMult: 1.05 },
+      { color: "rgba(56, 189, 248, 0.52)", speed: 0.058, shift: 4.2, freq: 3.2, ampMult: 0.92 },
+      { color: "rgba(168, 85, 247, 0.48)", speed: 0.026, shift: 1.2, freq: 2.0, ampMult: 1.2 },
+      { color: "rgba(244, 114, 182, 0.42)", speed: 0.038, shift: 3.0, freq: 2.6, ampMult: 0.98 },
+    ];
+
+    const render = () => {
+      const w = canvas.getBoundingClientRect().width;
+      const h = canvas.getBoundingClientRect().height;
+      ctx.clearRect(0, 0, w, h);
+
+      const st = stateRef.current;
+      const act = activityRef.current;
+      const isBusy = st === "analyzing" || st === "submitting";
+      const isListening = st === "listening";
+
+      let targetAmp = 46;
+      if (isListening) targetAmp = 64 + act * 16;
+      if (isBusy) targetAmp = 105;
+      currentAmp += (targetAmp - currentAmp) * 0.06;
+
+      let targetSpeed = 1;
+      if (isListening) targetSpeed = 1.35;
+      if (isBusy) targetSpeed = 3.6;
+      currentSpeed += (targetSpeed - currentSpeed) * 0.05;
+
+      waves.forEach((wave) => {
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += 3) {
+          const normX = (x / w) * 4 - 2;
+          const bell = Math.exp(-Math.pow(normX, 2));
+          const yOffset = Math.sin(normX * wave.freq + step * wave.speed + wave.shift) * currentAmp * wave.ampMult * bell;
+          ctx.lineTo(x, h / 2 + yOffset);
+        }
+        for (let x = w; x >= 0; x -= 3) {
+          const normX = (x / w) * 4 - 2;
+          const bell = Math.exp(-Math.pow(normX, 2));
+          const yOffset = Math.sin(normX * wave.freq + step * wave.speed + wave.shift) * currentAmp * wave.ampMult * bell;
+          ctx.lineTo(x, h / 2 - yOffset);
+        }
+        ctx.closePath();
+        ctx.fillStyle = wave.color;
+        ctx.fill();
+      });
+
+      step += currentSpeed;
+      animId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: "min(98%, 980px)",
+        height: "220px",
+        zIndex: 0,
+        pointerEvents: "none",
+        mixBlendMode: isLight ? "multiply" : "screen",
+        opacity: state === "listening" ? 0.95 : state === "results" ? 0.25 : 0.78,
+        transition: "opacity 0.4s ease",
+      }}
+    >
+      <canvas ref={canvasRef} style={{ width: "100%", height: "100%" }} />
+    </div>
+  );
+}
 
 export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +156,11 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
 
   const isLight = mode === "light";
   const isActive = isFocused || isOpen || isListening || inputVal.trim().length > 0;
+  const waveState = isLoading
+    ? "analyzing"
+    : isListening || isFocused || inputVal.length > 0
+    ? "listening"
+    : "idle";
 
   // Check stored API key on mount
   useEffect(() => {
@@ -241,9 +372,9 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-[80] pointer-events-none flex flex-col items-center justify-end px-3 sm:px-6 pb-3 sm:pb-5"
+      className="fixed bottom-0 left-0 right-0 z-[80] pointer-events-none flex flex-col items-center justify-end px-3 sm:px-6 pb-2.5 sm:pb-4"
       style={{
-        paddingBottom: "max(14px, env(safe-area-inset-bottom, 14px))",
+        paddingBottom: "max(12px, env(safe-area-inset-bottom, 12px))",
       }}
     >
       {/* ── EXPANDABLE CONVERSATIONAL DRAWER / CARD ── */}
@@ -252,10 +383,10 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
           ref={drawerRef}
           role="region"
           aria-label="Vikram AI Chat"
-          className="pointer-events-auto w-full max-w-[700px] mb-3 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col animate-in fade-in slide-in-from-bottom-6"
+          className="pointer-events-auto w-full max-w-[720px] mb-3 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col animate-in fade-in slide-in-from-bottom-6"
           style={{
             height: "min(490px, 62vh)",
-            background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 15, 30, 0.94)",
+            background: isLight ? "rgba(255, 255, 255, 0.96)" : "rgba(10, 15, 30, 0.95)",
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
             border: isLight ? "1px solid rgba(226, 232, 240, 0.9)" : "1px solid rgba(255, 255, 255, 0.14)",
@@ -472,20 +603,20 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
 
       {/* ── SUGGESTION PILLS (Modeled on screenshot with cyan/blue glow border) ── */}
       {(!isOpen || messages.length === 0) && (
-        <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-3 max-w-[760px]">
+        <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-2.5 max-w-[760px] relative z-20">
           {SUGGESTION_CHIPS.map((chip) => (
             <button
               key={chip}
               type="button"
               onClick={() => handleSend(chip)}
-              className="gemini-suggestion-chip px-5 sm:px-6 py-2 sm:py-2.5 rounded-full backdrop-blur-md cursor-pointer select-none text-xs sm:text-sm font-medium tracking-tight"
+              className="gemini-suggestion-chip px-4 sm:px-5 py-1.5 sm:py-2 rounded-full backdrop-blur-md cursor-pointer select-none text-xs sm:text-[13px] font-medium tracking-tight"
               style={{
-                background: isLight ? "rgba(255, 255, 255, 0.90)" : "rgba(15, 23, 42, 0.88)",
+                background: isLight ? "rgba(255, 255, 255, 0.92)" : "rgba(15, 23, 42, 0.90)",
                 color: isLight ? "#0c1c4f" : "#f1f5f9",
                 border: isLight ? "1.5px solid rgba(56, 189, 248, 0.55)" : "1.5px solid rgba(56, 189, 248, 0.45)",
                 boxShadow: isLight
-                  ? "0 4px 14px rgba(56, 189, 248, 0.22), 0 1px 3px rgba(0, 0, 0, 0.05)"
-                  : "0 4px 18px rgba(56, 189, 248, 0.25), 0 0 12px rgba(139, 92, 246, 0.15)",
+                  ? "0 4px 14px rgba(56, 189, 248, 0.20), 0 1px 3px rgba(0, 0, 0, 0.05)"
+                  : "0 4px 18px rgba(56, 189, 248, 0.22), 0 0 12px rgba(139, 92, 246, 0.15)",
               }}
             >
               {chip}
@@ -497,7 +628,7 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
       {/* ── STATUS NOTICE TOOLTIP / SPEECH FEEDBACK ── */}
       {statusNotice && (
         <div
-          className="pointer-events-auto mb-2 text-xs font-medium px-3.5 py-1.5 rounded-full border shadow-sm animate-in fade-in"
+          className="pointer-events-auto mb-2 text-xs font-medium px-3.5 py-1.5 rounded-full border shadow-sm animate-in fade-in relative z-20"
           style={{
             background: isLight ? "rgba(255, 255, 255, 0.96)" : "rgba(30, 41, 59, 0.96)",
             color: isListening ? "#ef4444" : isLight ? "#0369a1" : "#38bdf8",
@@ -509,104 +640,100 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
         </div>
       )}
 
-      {/* ── GEMINI MODELED PROMPT BAR (Outer Glow Aura + Flowing Gradient Border) ── */}
-      <div className="pointer-events-auto w-full max-w-[700px] relative">
-        {/* Ambient Blur Aura (Intensifies and pulses when active/focused) */}
-        <div
-          className={`gemini-ambient-glow absolute -inset-1 rounded-full pointer-events-none transition-all duration-500 ${
-            isActive ? "opacity-90" : "opacity-35"
-          }`}
-          style={{
-            background:
-              "linear-gradient(115deg, rgba(0, 210, 255, 0.7) 0%, rgba(59, 130, 246, 0.6) 25%, rgba(168, 85, 247, 0.7) 55%, rgba(236, 72, 153, 0.7) 85%, rgba(0, 210, 255, 0.7) 100%)",
-            backgroundSize: "200% 200%",
-          }}
-        />
+      {/* ── ADOPTIQ EXACT COMPONENT STAGE (Canvas Waveform + Glowing Command Bar) ── */}
+      <div className="adoptiq-input-stage pointer-events-auto">
+        {/* Exact AdoptIQ Siri/Gemini Canvas Waveform (flowing behind the bar) */}
+        <CanvasWaveform state={waveState} activity={inputVal.length > 0 ? 1.2 : 1} isLight={isLight} />
 
-        {/* Outer Pill with Flowing Multi-Stop Gradient Border */}
-        <div
-          className={`relative rounded-full p-[2px] transition-all duration-300 shadow-xl ${
-            isActive ? "gemini-gradient-border-active shadow-2xl scale-[1.008]" : "gemini-gradient-border"
-          }`}
-        >
-          {/* Inner Glassy Surface */}
+        {/* Command Bar Wrapper with Rotating Conic Glow on Active */}
+        <div className="command-bar-wrapper">
+          {/* Active Conic Gradient Glow Layer (Exact AdoptIQ Glow Effect) */}
+          {isActive && (
+            <>
+              {/* Outer Blurred Glow */}
+              <div
+                className="conic-glow-layer blur-sm transition-opacity duration-500 opacity-40"
+                aria-hidden="true"
+              />
+              {/* Crisp Border Glow */}
+              <div
+                className="conic-glow-layer transition-opacity duration-500 opacity-100"
+                aria-hidden="true"
+              />
+              {/* Inner Spill Glow Mask */}
+              <div
+                className="conic-glow-layer ai-glow-spill-mask blur-md pointer-events-none inset-[-12%] opacity-25"
+                aria-hidden="true"
+              />
+            </>
+          )}
+
+          {/* Exact AdoptIQ Command Bar */}
           <div
-            className="w-full flex items-center justify-between px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-colors relative"
-            style={{
-              background: isLight ? "rgba(255, 255, 255, 0.96)" : "rgba(10, 15, 28, 0.93)",
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
-              boxShadow: isLight
-                ? "inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 4px 20px rgba(0, 0, 0, 0.04)"
-                : "inset 0 1px 1px rgba(255, 255, 255, 0.12), 0 8px 30px rgba(0, 0, 0, 0.4)",
-            }}
+            className={`command-bar ${isFocused || isActive ? "command-bar--focused" : ""}`}
             onClick={() => inputRef.current?.focus()}
           >
-            {/* Formatted Text Placeholder: "Hi, I’m Vikram. Ask me anything." */}
-            {!inputVal && (
-              <div className="pointer-events-none absolute left-6 sm:left-8 flex items-center text-sm sm:text-[17px] tracking-tight select-none z-10 transition-opacity">
-                <span
-                  className="font-bold mr-2"
-                  style={{ color: isLight ? "#070e24" : "#ffffff" }}
-                >
-                  Hi, I’m Vikram.
-                </span>
-                <span
-                  className="font-normal"
-                  style={{ color: isLight ? "rgba(12, 28, 79, 0.92)" : "rgba(241, 245, 249, 0.88)" }}
-                >
-                  Ask me anything.
-                </span>
-              </div>
-            )}
+            {/* Left Plus Circle Icon from AdoptIQ (zE in AdoptIQ) */}
+            <div
+              className="command-bar__plus"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen(!isOpen);
+              }}
+              title="Open suggestions and AMA settings"
+              aria-label="Open suggestions"
+            >
+              <PlusCircle size={22} strokeWidth={1.8} />
+            </div>
 
-            {/* Input Field */}
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-              onFocus={() => {
-                setIsFocused(true);
-                if (!isOpen && messages.length > 0) setIsOpen(true);
-              }}
-              onBlur={() => setIsFocused(false)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-              className="flex-1 bg-transparent border-none outline-none text-sm sm:text-[17px] font-normal relative z-20 transition-colors pr-2"
-              style={{
-                color: isLight ? "#070e24" : "#f8fafc",
-                caretColor: isLight ? "#2563eb" : "#38bdf8",
-              }}
-              aria-label="Ask Vikram anything"
-            />
-
-            {/* Right Action Icons: Microphone (matching design) + Send when text typed */}
-            <div className="relative z-20 flex items-center gap-2 shrink-0">
-              {/* Send Button (Appears when text is typed) */}
-              {inputVal.trim().length > 0 && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSend();
-                  }}
-                  disabled={isLoading}
-                  title="Send question"
-                  aria-label="Send question"
-                  className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-md"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </button>
+            {/* Formatted Content: "Hi, I'm Vikram. Ask me anything." */}
+            <div className="relative flex-1 flex items-center min-w-0 h-full">
+              {!inputVal && (
+                <div className="pointer-events-none absolute left-0 right-0 flex items-center text-[15px] sm:text-[16px] tracking-tight select-none z-10 overflow-hidden text-ellipsis whitespace-nowrap">
+                  <span
+                    className="font-bold mr-1.5 shrink-0"
+                    style={{ color: isLight ? "#070e24" : "#ffffff" }}
+                  >
+                    Hi, I’m Vikram.
+                  </span>
+                  <span
+                    className="font-normal truncate"
+                    style={{ color: isLight ? "#475569" : "#cbd5e1" }}
+                  >
+                    Ask me anything.
+                  </span>
+                </div>
               )}
 
-              {/* Microphone Icon Button (Exact match from screenshot) */}
+              {/* Interactive Input */}
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputVal}
+                onChange={(e) => setInputVal(e.target.value)}
+                onFocus={() => {
+                  setIsFocused(true);
+                  if (!isOpen && messages.length > 0) setIsOpen(true);
+                }}
+                onBlur={() => setIsFocused(false)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                className="w-full bg-transparent border-none outline-none text-[15px] sm:text-[16px] font-normal relative z-20"
+                style={{
+                  color: isLight ? "#070e24" : "#f8fafc",
+                  caretColor: isLight ? "#7c3aed" : "#a855f7",
+                }}
+                aria-label="Ask Vikram anything"
+              />
+            </div>
+
+            {/* Right Action Controls: Voice Microphone + Exact AdoptIQ Circular Submit Button (sA) */}
+            <div className="flex items-center gap-2 relative z-20 shrink-0">
+              {/* Microphone Voice Button */}
               <button
                 type="button"
                 onClick={(e) => {
@@ -615,42 +742,39 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
                 }}
                 title={isListening ? "Stop listening" : "Ask with voice"}
                 aria-label={isListening ? "Stop listening" : "Ask with voice"}
-                className={`p-1.5 rounded-full transition-all duration-200 cursor-pointer ${
+                className={`p-2 rounded-full transition-all duration-200 cursor-pointer ${
                   isListening
                     ? "bg-red-500/20 text-red-500 scale-110 shadow-lg"
-                    : "hover:scale-110 active:scale-95"
+                    : "text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:scale-105 active:scale-95"
                 }`}
                 style={{
-                  color: isListening
-                    ? "#ef4444"
-                    : isLight
-                    ? "#0a194f"
-                    : "#f1f5f9",
                   boxShadow: isListening ? "0 0 0 4px rgba(239, 68, 68, 0.3)" : undefined,
                 }}
               >
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  <line x1="12" x2="12" y1="19" y2="22" />
-                </svg>
+                <Mic size={18} strokeWidth={2} />
+              </button>
+
+              {/* Exact AdoptIQ Submit Button with ArrowUp (sA from AdoptIQ) */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSend();
+                }}
+                disabled={!inputVal.trim() || isLoading}
+                title="Send query"
+                aria-label="Run query"
+                className="submit-button"
+              >
+                <ArrowUp size={22} strokeWidth={1.9} />
               </button>
             </div>
           </div>
         </div>
 
-        {/* ── SUBTITLE HELPER TEXT (Exact match from screenshot) ── */}
+        {/* ── SUBTITLE HELPER TEXT ── */}
         <div
-          className="text-center text-[11px] sm:text-xs font-normal tracking-wide mt-2 select-none transition-colors"
+          className="text-center text-[11px] sm:text-xs font-normal tracking-wide mt-1.5 select-none transition-colors relative z-20"
           style={{
             color: isLight ? "rgba(71, 85, 105, 0.85)" : "rgba(148, 163, 184, 0.75)",
           }}
