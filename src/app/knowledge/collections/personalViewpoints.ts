@@ -93,5 +93,113 @@ export const PERSONAL_VIEWPOINTS: PersonalViewpoint[] = [
     applicableTimePeriod: "2024 – Present",
     relatedProjects: ["Vibe Coding Showcase", "AdoptIQ"],
     relatedTopics: ["vibe-coding", "prototyping", "craft"]
+  },
+  {
+    id: "viewpoint-blank-canvas-action",
+    topic: "The Blank-Canvas Moment & Behavioral Progression in AI",
+    belief: "Don't design only for whether people understand the capability. Design for whether they can confidently take the next action.",
+    whyIHoldThisBelief: "When someone arrives at an open prompt field, they still have to interpret capability, connect it to a task, formulate the request, and judge if effort is worthwhile. That is a surprisingly large cognitive step. Awareness, intent, first use, proficiency, and habit formation are different design problems; adding more education or prompt catalogs doesn't solve it if people cannot take the next meaningful action.",
+    concreteExamples: [
+      "Exploring contextual starting points, task-relevant scenarios, prompt starters, and lower-interpretation guidance in Copilot adoption experiences"
+    ],
+    exceptionsAndNuances: "Experienced power users with established prompt libraries and habitual workflows who prefer a blank canvas for unconstrained zero-shot interactions.",
+    searchKeywords: ["ai adoption", "how does vikram think about ai adoption", "blank-canvas moment", "blank canvas", "what does vikram mean by the blank-canvas moment", "prompt friction", "behavioral progression"],
+    sourceRef: "Owner Knowledge Interview",
+    verificationStatus: "verified",
+    publicApprovalStatus: "approved",
+    lastReviewedDate: "2026-09-09",
+    applicableTimePeriod: "Permanent",
+    relatedProjects: ["Copilot Adoption", "AdoptIQ"],
+    relatedTopics: ["behavioral-design", "ai-adoption", "prompt-interaction"]
+  },
+  {
+    id: "viewpoint-essential-complexity",
+    topic: "Simplify the Experience, Not the Truth of the System",
+    belief: "Complexity itself is not the enemy. Unstructured complexity is the problem. Simplify the experience, not the truth of the system.",
+    whyIHoldThisBelief: "In technical, layered, and interconnected enterprise systems, simplification becomes misleading if it hides relationships or system state that operators need to make confident decisions. Experienced users need depth and precision more than visual minimalism. The designer's role is to structure depth through information architecture, progressive disclosure, system hierarchy, and dependency relationships so users access the right complexity at the right moment.",
+    concreteExamples: [
+      "Structuring technical depth in Anthos and Cloud Security without collapsing interconnected multi-cloud dependencies into flat dashboards"
+    ],
+    exceptionsAndNuances: "Consumer utility apps with single-intent tasks where radical interface reduction absorbs nearly all backend variables without consequence.",
+    searchKeywords: ["complexity in enterprise products", "how does vikram approach complexity", "essential complexity", "oversimplification", "simplify the experience", "truth of the system"],
+    sourceRef: "Owner Knowledge Interview",
+    verificationStatus: "verified",
+    publicApprovalStatus: "approved",
+    lastReviewedDate: "2026-09-09",
+    applicableTimePeriod: "Permanent",
+    relatedProjects: ["Anthos", "Google Cloud Security"],
+    relatedTopics: ["systems-design", "enterprise-ux", "information-architecture"]
+  },
+  {
+    id: "viewpoint-craft-interrogate-strategy",
+    topic: "Using Craft to Interrogate Strategy Across Levels of Resolution",
+    belief: "I use craft not only to execute strategy, but to interrogate it. My role as a design leader is to move between levels of resolution.",
+    whyIHoldThisBelief: "When strategic intent is agreed upon in the abstract, divergent interpretations appear at the interaction layer because trade-offs haven't become tangible. Moving closer to craft—information hierarchy, key interaction states, flows, or prototypes—reveals what a strategy document cannot, replacing vague debates like 'simple' or 'intelligent' with precise operational questions about user control, automation boundaries, and breakdown states.",
+    concreteExamples: [
+      "Selective hands-on prototyping when product strategy fails to converge, uncovering unfeasible roadmap assumptions and feeding learnings back into strategic direction"
+    ],
+    exceptionsAndNuances: "When product direction and interaction models are already proven and converging smoothly; leaders should then delegate fully to preserve team autonomy and focus on organizational scaling.",
+    searchKeywords: ["how hands-on is vikram", "hands-on as a design leader", "craft and strategy", "interrogate strategy", "levels of resolution", "hands-on"],
+    sourceRef: "Owner Knowledge Interview",
+    verificationStatus: "verified",
+    publicApprovalStatus: "approved",
+    lastReviewedDate: "2026-09-09",
+    applicableTimePeriod: "Permanent",
+    relatedProjects: [],
+    relatedTopics: ["leadership", "craft", "design-strategy"]
+  },
+  {
+    id: "viewpoint-ai-autonomy-calibration",
+    topic: "Calibrating AI Autonomy, Trust Boundaries & Deliberate Friction",
+    belief: "Automate the reversible. Assist with the consequential. Make uncertainty visible. When the cost of being wrong is high, optimize for recoverability and accountability, not just efficiency.",
+    whyIHoldThisBelief: "Autonomy should scale with confidence, reversibility, and clarity of consequence. Trust is a calibration problem rather than a permission problem. Adding confirmation dialogs everywhere creates an illusion of safety while causing fatigue and mechanical clicking. Consequential moments warrant deliberate friction for reflection, transparent reasoning, and easy error recovery.",
+    concreteExamples: [
+      "Proactively automating low-risk reversible tasks; having AI prepare, summarize, or pre-fill for consequential actions while keeping humans in control"
+    ],
+    exceptionsAndNuances: "Deterministic, rule-based operations with 100% formal verification and zero probabilistic variance can be fully automated regardless of scale.",
+    searchKeywords: ["how does vikram decide when ai should act autonomously", "ai autonomy", "autonomously", "human in the loop", "trust boundaries", "deliberate friction", "reversibility"],
+    sourceRef: "Owner Knowledge Interview",
+    verificationStatus: "verified",
+    publicApprovalStatus: "approved",
+    lastReviewedDate: "2026-09-09",
+    applicableTimePeriod: "Permanent",
+    relatedProjects: ["AI Finance", "Cloud Security"],
+    relatedTopics: ["ai-interaction", "trust", "automation-ethics"]
+  },
+  {
+    id: "viewpoint-coherence-over-uniformity",
+    topic: "Coherence Over Uniformity & Intentional Contrast",
+    belief: "Design systems create coherence. Contrast creates meaning. I don’t optimize for consistency at all costs; I optimize for a coherent experience with intentional moments of difference.",
+    whyIHoldThisBelief: "In art, contrast gives meaning to composition; if everything has the same weight, nothing has emphasis. Forcing pivotal moments—important decisions, transitions, achievements, warnings, or reveals—into standard component treatments preserves the design system at the expense of human experience. Coherence means belonging to the same world without requiring identical uniformity.",
+    concreteExamples: [
+      "Breaking component rhythms for pivotal milestones, critical decisions, or high-friction security warnings"
+    ],
+    exceptionsAndNuances: "Repetitive, high-volume transactional data entry (e.g. ERP tables or call-center forms) where strict visual monotony reduces visual distraction and accelerates muscle memory.",
+    searchKeywords: ["how does being an artist influence vikram", "consistency vs coherence", "coherence over uniformity", "contrast creates meaning", "design dogma", "artistic influence"],
+    sourceRef: "Owner Knowledge Interview",
+    verificationStatus: "verified",
+    publicApprovalStatus: "approved",
+    lastReviewedDate: "2026-09-09",
+    applicableTimePeriod: "Permanent",
+    relatedProjects: [],
+    relatedTopics: ["artistic-critique", "design-systems", "visual-rhythm"]
+  },
+  {
+    id: "viewpoint-collaboration-and-critique",
+    topic: "Operating Cadence, Design Critique & Cross-Functional Partnership",
+    belief: "Bring me your point of view, not just your work. In critique, I want to strengthen the thinking behind the design, not redesign it in my image.",
+    whyIHoldThisBelief: "A design leader can easily turn personal taste into organizational authority. In critique, I strictly separate 1) what is objectively unclear, 2) what is a strategic or product concern, and 3) what is simply my personal preference. True alignment means everyone understands the decision, respects the reasoning, and commits to next steps, not having identical opinions.",
+    concreteExamples: [
+      "Early engineering integration around technical constraints; separating user problems from business intent with PMs; empowering designers who demonstrate sound rationale and system coherence"
+    ],
+    exceptionsAndNuances: "Urgent production incidents or zero-day security vulnerabilities where immediate executive direction is required before consensus or extensive critique.",
+    searchKeywords: ["what is vikram like to work with", "how does vikram run design critiques", "working with vikram", "design critiques", "feedback", "critique", "collaboration", "non-negotiables"],
+    sourceRef: "Owner Knowledge Interview",
+    verificationStatus: "verified",
+    publicApprovalStatus: "approved",
+    lastReviewedDate: "2026-09-09",
+    applicableTimePeriod: "Permanent",
+    relatedProjects: [],
+    relatedTopics: ["leadership-cadence", "design-critique", "team-culture"]
   }
 ];

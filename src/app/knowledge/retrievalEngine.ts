@@ -55,33 +55,49 @@ export function checkBoundaries(query: string): string | null {
 
 /**
  * Exact / High-Confidence Voice Calibration Lookup
+ * 
+ * Confidence Model:
+ * Rather than assigning an arbitrary static score, confidence dynamically reflects:
+ * 1. Keyword coverage ratio: How much of the user's query is matched by the calibrated trigger phrase.
+ * 2. Phrase specificity: Multi-word phrase matches receive higher weight than single-word token hits.
+ * 3. Evidence tier: All items in PUBLISHED_VOICE are verified first-person owner recordings (dynamically scaled between 0.84 and 0.98).
  */
-export function findExactVoiceMatch(query: string): { answer: string; mode: AnswerMode; source: string } | null {
+export function findExactVoiceMatch(query: string): { answer: string; mode: AnswerMode; source: string; confidence: number } | null {
   const clean = query.toLowerCase().trim();
   let bestMatch: (typeof PUBLISHED_VOICE)[0] | null = null;
   let maxScore = 0;
+  let bestMatchedKwLen = 0;
 
   for (const item of PUBLISHED_VOICE) {
     let score = 0;
+    let longestKw = 0;
     for (const kw of item.triggerKeywords) {
       const lowerKw = kw.toLowerCase();
       if (clean.includes(lowerKw)) {
         // Boost full phrase matches
-        score += lowerKw.length * (lowerKw.split(" ").length > 1 ? 2 : 1);
+        const kwScore = lowerKw.length * (lowerKw.split(" ").length > 1 ? 2 : 1);
+        score += kwScore;
+        if (lowerKw.length > longestKw) longestKw = lowerKw.length;
       }
     }
     if (score > maxScore) {
       maxScore = score;
       bestMatch = item;
+      bestMatchedKwLen = longestKw;
     }
   }
 
   // Threshold score of 6 ensures strong match confidence
   if (bestMatch && maxScore >= 6) {
+    // Dynamic confidence: scales from 0.84 (partial trigger match) to 0.98 (verbatim trigger match)
+    const coverageRatio = Math.min(1.0, bestMatchedKwLen / Math.max(clean.length, 1));
+    const dynamicConfidence = Math.round((0.84 + coverageRatio * 0.14) * 100) / 100;
+
     return {
       answer: bestMatch.approvedAnswer,
       mode: bestMatch.preferredAnswerMode,
-      source: bestMatch.sourceRef
+      source: bestMatch.sourceRef,
+      confidence: dynamicConfidence
     };
   }
 
@@ -114,7 +130,7 @@ export function retrieveRelevantKnowledge(query: string, limit = 4): RetrievalRe
       matchedBoundary: false,
       contextChunks: [exactVoice.answer],
       sources: [exactVoice.source],
-      confidence: 0.95
+      confidence: exactVoice.confidence
     };
   }
 

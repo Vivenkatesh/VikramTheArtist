@@ -8,7 +8,7 @@ export const PROJECT_STORIES: ProjectStory[] = [
     title: "Driving Copilot Adoption in Viva Engage & Teams",
     company: "Microsoft",
     context: "Enterprises purchased tens of thousands of Microsoft 365 Copilot licenses, but employees were stuck in trial fatigue and inconsistent usage patterns.",
-    userProblem: "Employees found generative AI intimidating or generic, lacking social proof, contextual prompts, and safe environments to learn everyday habits.",
+    userProblem: "I observed the 'blank-canvas moment': arriving at an open prompt field requires significant cognitive translation—interpreting what AI can do, formulating a specific request, and judging whether the result will help—before experiencing value. Feature discovery and prompt libraries alone were not closing the gap.",
     constraints: [
       "Rigid enterprise IT compliance and multi-tenant security boundaries",
       "Fragmented user surfaces across Teams and Viva Engage",
@@ -17,7 +17,8 @@ export const PROJECT_STORIES: ProjectStory[] = [
     mySpecificContribution: [
       "Architected the end-to-end Copilot Adoption Community experience inside Viva Engage",
       "Led design integrating Viva Engage Communities directly into Microsoft Teams collaboration flows",
-      "Formulated the 5-stage ADOPT behavioral model: Awareness, Discovery, Optimization, Proficiency, and Transformation",
+      "Explored contextual starting points, task-relevant scenarios, prompt starters, and lower-interpretation entry points",
+      "Formulated the 5-stage ADOPT behavioral model (Awareness, Discovery, Optimization, Proficiency, Transformation)",
       "Prototyped interactive prompt sharing, community recognition, and leadership sponsorship rituals"
     ],
     collaborators: [
@@ -29,12 +30,12 @@ export const PROJECT_STORIES: ProjectStory[] = [
     optionsConsidered: [
       "Option A: Static in-app help documentation and guided tooltips (low emotional resonance, poor retention)",
       "Option B: Top-down mandatory training modules (felt like compliance chores, rejected by users)",
-      "Option C (Selected): Peer-led community learning with contextual prompt inspiration and leadership recognition"
+      "Option C (Selected): Behavioral progression through contextual starting points, peer-led community learning, and shared prompt rituals"
     ],
-    decision: "Anchor adoption in human community dynamics and psychological safety, embedding shared prompt rituals directly into the daily Teams workspace.",
-    tradeOff: "Accepted higher initial community moderation overhead in exchange for organic peer-driven engagement and genuine workflow transformation.",
+    decision: "Shifted personal design emphasis from generic educational discovery and prompt catalogs toward behavioral progression, making the next meaningful action obvious and low-friction directly within Teams.",
+    tradeOff: "Focused design exploration on lowering initial cognitive friction and supporting distinct behavioral stages rather than attempting to comprehensively explain the full breadth of model capabilities up front.",
     outcome: "Scaled Copilot adoption to 1.5M+ MAU across 850+ enterprise tenants, achieving 2.5x tenant growth and expanding weekly active users 3x (from 936K to 3.4M WAU).",
-    reflection: "Enterprise AI adoption is fundamentally a behavioral challenge, not a feature delivery problem. Real impact happens when software nurtures community habits.",
+    reflection: "Don't design only for whether people understand the capability. Design for whether they can confidently take the next action. Awareness, intent, first use, proficiency, and habit formation are distinct design problems.",
     relatedMetrics: ["metric-msft-copilot-mau", "metric-msft-copilot-wau-growth", "metric-msft-tenant-growth"],
     sourceRef: "Microsoft Viva Engage Case Study & Internal Playbook",
     verificationStatus: "verified",
@@ -42,7 +43,7 @@ export const PROJECT_STORIES: ProjectStory[] = [
     lastReviewedDate: "2026-09-08",
     applicableTimePeriod: "2025 – Present",
     relatedProjects: ["Copilot Adoption", "AdoptIQ"],
-    relatedTopics: ["enterprise-ai", "adoption-frameworks", "behavioral-design"]
+    relatedTopics: ["enterprise-ai", "adoption-frameworks", "behavioral-design", "blank-canvas"]
   },
 
   // ── 2. Google Cloud Security & Anthos UX Overhaul ──
@@ -51,8 +52,8 @@ export const PROJECT_STORIES: ProjectStory[] = [
     projectKey: "google-anthos-security",
     title: "Google Cloud Security & Anthos UX Modernization",
     company: "Google",
-    context: "Google Cloud's hybrid/multi-cloud platform (Anthos) and Cloud Security Command Center offered immense architectural power but were notoriously complex to configure and manage.",
-    userProblem: "Security administrators and DevOps engineers struggled with fragmented configuration panes, dense tabular data, and high cognitive load when triaging threats across multi-cloud environments.",
+    context: "Google Cloud's hybrid/multi-cloud platform (Anthos) and Cloud Security Command Center offered immense architectural power but were inherently technical, layered, and interconnected.",
+    userProblem: "In inherently technical systems, superficial interface simplification can become misleading if it hides relationships or system state that operators need to make confident decisions. Experienced users needed depth and precision more than visual minimalism.",
     constraints: [
       "Complex distributed backend architectures with multi-second API latency",
       "Extreme risk aversion: misconfigurations could compromise enterprise infrastructure",
@@ -60,6 +61,7 @@ export const PROJECT_STORIES: ProjectStory[] = [
     ],
     mySpecificContribution: [
       "Led the comprehensive UX overhaul of Anthos management interfaces across 39 months",
+      "Structured technical depth through information architecture, progressive disclosure, system hierarchy, and explicit status/dependency relationships",
       "Consolidated multi-pane security telemetry into cohesive, actionable dashboard cards and automated remediation workflows",
       "Transformed manual CLI-heavy policy enforcement into visual posture management workflows",
       "Mentored and guided cross-functional design squads across NYC and Sunnyvale"
@@ -72,12 +74,13 @@ export const PROJECT_STORIES: ProjectStory[] = [
     ],
     optionsConsidered: [
       "Option A: Incremental patching of legacy tables (faster, but failed to address deep user fatigue)",
-      "Option B (Selected): 0-to-1 workflow re-architecture organizing UI around administrator intent and automated triage"
+      "Option B: Collapsing system state into ultra-simplified consumer-style dashboards (rejected: hid vital dependency states)",
+      "Option C (Selected): Structuring technical depth through progressive disclosure, clear hierarchies, and intent-driven posture remediation"
     ],
-    decision: "Shifted the interaction paradigm from passive reactive monitoring to proactive, guided posture remediation.",
-    tradeOff: "Required convincing engineering leadership to refactor backend aggregation endpoints to support unified frontend states.",
+    decision: "Resisted the temptation to collapse everything into a single simplified surface; structured depth so operators access the right level of complexity at the right moment.",
+    tradeOff: "Accepted higher interface information density and structured multi-layered views over visual minimalism, prioritizing the precision and trust required by expert technical operators.",
     outcome: "Accelerated enterprise product adoption by 30% and elevated CSAT by 25% across 39 months, unlocking faster enterprise cloud migration.",
-    reflection: "In mission-critical enterprise tools, simplicity is an act of engineering courage. Designing for security means earning the operator's trust at every step.",
+    reflection: "Simplify the experience, not the truth of the system. Complexity itself is not the enemy; unstructured complexity is the problem.",
     relatedMetrics: ["metric-google-anthos-adoption", "metric-google-anthos-csat"],
     sourceRef: "Google Cloud UX Portfolio & OKR Reviews",
     verificationStatus: "verified",
@@ -85,7 +88,7 @@ export const PROJECT_STORIES: ProjectStory[] = [
     lastReviewedDate: "2026-09-08",
     applicableTimePeriod: "2021 – 2024",
     relatedProjects: ["Anthos", "Data Security Posture Mgmt"],
-    relatedTopics: ["cloud-security", "developer-tools", "enterprise-ux"]
+    relatedTopics: ["cloud-security", "developer-tools", "enterprise-ux", "essential-complexity"]
   },
 
   // ── 3. AI-Powered Financial Operations at Oracle ──

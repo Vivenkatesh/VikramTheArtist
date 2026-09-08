@@ -5,15 +5,15 @@ export const PERSONAL_INTERESTS: PersonalInterest[] = [
     id: "interest-art-vikramtheartist",
     category: "art",
     topic: "Digital Art & 'VikramTheArtist' Identity",
-    approvedMaterial: "My online moniker 'vikramtheartist' comes from my lifelong connection to visual art, sketching, and digital illustration. I view software design as an extension of canvas art—where composition, tension, harmony, and negative space dictate how a person emotionally experiences digital space.",
-    searchKeywords: ["art", "artist", "vikramtheartist", "drawing", "illustration", "painting", "creative roots"],
-    sourceRef: "vikramtheartist.com brand identity",
+    approvedMaterial: "My background in visual art ('vikramtheartist') trained me to pay attention to qualities that are difficult to quantify but immediately felt: tension, rhythm, composition, contrast, silence, imbalance, emphasis, and emotional residue. When evaluating software, I don't only ask whether an interface is usable or technically correct; I ask where the eye is pulled, where the experience breathes, what feels unresolved, and what emotion is left behind. Consistency should build mental models, not flatten every moment into uniform patterns. Core principles: 'Design systems create coherence. Contrast creates meaning.' and 'I don't optimize for consistency at all costs. I optimize for a coherent experience with intentional moments of difference.'",
+    searchKeywords: ["art", "artist", "vikramtheartist", "how does being an artist influence", "drawing", "illustration", "creative roots", "tension", "rhythm", "contrast", "coherence"],
+    sourceRef: "vikramtheartist.com brand identity & Owner Interview",
     verificationStatus: "verified",
     publicApprovalStatus: "approved",
-    lastReviewedDate: "2026-09-08",
+    lastReviewedDate: "2026-09-09",
     applicableTimePeriod: "Permanent",
     relatedProjects: [],
-    relatedTopics: ["art", "identity"]
+    relatedTopics: ["art", "identity", "artistic-critique"]
   },
   {
     id: "interest-spatial-architecture",
