@@ -142,9 +142,6 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
   const [inputVal, setInputVal] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [showSettings, setShowSettings] = useState(false);
-  const [apiKeyInput, setApiKeyInput] = useState("");
-  const [hasCustomKey, setHasCustomKey] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [statusNotice, setStatusNotice] = useState<string | null>(null);
@@ -161,13 +158,6 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
     : isListening || isFocused || inputVal.length > 0
     ? "listening"
     : "idle";
-
-  // Check stored API key on mount
-  useEffect(() => {
-    const key = getStoredApiKey();
-    setHasCustomKey(!!key);
-    if (key) setApiKeyInput(key);
-  }, []);
 
   // Auto scroll messages to bottom
   useEffect(() => {
@@ -241,11 +231,6 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
     }
   };
 
-  const handleSaveApiKey = () => {
-    setStoredApiKey(apiKeyInput);
-    setHasCustomKey(!!apiKeyInput.trim());
-    setShowSettings(false);
-  };
 
   const handleClearChat = () => {
     setMessages([]);
@@ -372,8 +357,9 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-[80] pointer-events-none flex flex-col items-center justify-end px-3 sm:px-6 pb-2.5 sm:pb-4"
+      className="fixed bottom-0 left-0 right-0 z-[80] pointer-events-none flex flex-col items-center justify-end px-3 sm:px-6"
       style={{
+        bottom: "20px",
         paddingBottom: "max(12px, env(safe-area-inset-bottom, 12px))",
       }}
     >
@@ -423,34 +409,10 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
               <span className="text-sm font-semibold tracking-tight" style={{ color: isLight ? "#0f172a" : "#f1f5f9" }}>
                 Ask Vikram Anything
               </span>
-              <span
-                className="text-[10px] font-medium px-2 py-0.5 rounded-full border"
-                style={{
-                  color: isLight ? "#0369a1" : "#7dd3fc",
-                  backgroundColor: isLight ? "#e0f2fe" : "rgba(56, 189, 248, 0.12)",
-                  borderColor: isLight ? "#bae6fd" : "rgba(56, 189, 248, 0.25)",
-                }}
-              >
-                Gemini Model
-              </span>
             </div>
 
-            {/* Actions: Settings, Clear, Minimize */}
+            {/* Actions: Clear, Minimize */}
             <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => setShowSettings(!showSettings)}
-                title="Configure Gemini API Key"
-                aria-label="Configure Gemini API Key"
-                className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-                style={{ color: isLight ? "#64748b" : "#94a3b8" }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                </svg>
-              </button>
-
               {messages.length > 0 && (
                 <button
                   type="button"
@@ -480,54 +442,6 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
               </button>
             </div>
           </div>
-
-          {/* Settings Panel Modal */}
-          {showSettings && (
-            <div
-              className="p-4 border-b animate-in fade-in"
-              style={{
-                background: isLight ? "#f8fafc" : "rgba(15, 23, 42, 0.95)",
-                borderColor: isLight ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.1)",
-              }}
-            >
-              <div className="text-xs font-semibold mb-1" style={{ color: isLight ? "#0f172a" : "#f1f5f9" }}>
-                Google Gemini API Key
-              </div>
-              <p className="text-[11px] mb-3 leading-relaxed" style={{ color: isLight ? "#64748b" : "#94a3b8" }}>
-                Optionally paste your Gemini API key from{" "}
-                <a
-                  href="https://aistudio.google.com/app/apikey"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 underline"
-                >
-                  Google AI Studio
-                </a>
-                . Keys are saved locally in your browser. If empty, the built-in offline knowledge engine answers your queries authentically.
-              </p>
-              <div className="flex gap-2">
-                <input
-                  type="password"
-                  placeholder="AIzaSy..."
-                  value={apiKeyInput}
-                  onChange={(e) => setApiKeyInput(e.target.value)}
-                  className="flex-1 text-xs px-3 py-1.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  style={{
-                    background: isLight ? "#ffffff" : "rgba(30, 41, 59, 0.8)",
-                    color: isLight ? "#0f172a" : "#f8fafc",
-                    borderColor: isLight ? "#cbd5e1" : "rgba(255, 255, 255, 0.15)",
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={handleSaveApiKey}
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* Chat Messages Body */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs sm:text-sm">
