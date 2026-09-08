@@ -257,3 +257,26 @@
   animation: conic-angle-spin 3.5s linear infinite;
   pointer-events: none;
 }
+
+/* ── Docked In Menu State (Smooth Header Transition) ── */
+.command-bar--docked {
+  height: 38px !important;
+  padding: 0 6px 0 14px !important;
+  gap: 8px !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 0 10px rgba(139, 92, 246, 0.08) !important;
+}
+
+.dark .command-bar--docked {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 12px rgba(139, 92, 246, 0.15) !important;
+}
+
+.command-bar-wrapper--docked {
+  width: 100% !important;
+  max-width: 320px !important;
+}
+
+.submit-button--docked {
+  width: 28px !important;
+  height: 28px !important;
+}

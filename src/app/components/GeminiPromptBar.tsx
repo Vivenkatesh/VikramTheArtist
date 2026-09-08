@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ArrowUp, Mic } from "lucide-react";
 import { askGemini, ChatMessage } from "../utils/geminiClient";
+import { loadStoredSession, saveStoredSession, clearStoredSession } from "../knowledge/visitorConversationState";
 
 interface GeminiPromptBarProps {
   mode: "dark" | "light";
@@ -13,16 +14,18 @@ const SUGGESTION_CHIPS = [
 ];
 
 /**
- * CanvasWaveform: Exact high-DPI Siri/Gemini canvas ribbon wave component from AdoptIQ
+ * CanvasWaveform: High-DPI Siri/Gemini canvas ribbon wave component from AdoptIQ
  */
 function CanvasWaveform({
   state,
   activity = 1,
   isLight,
+  isDocked = false,
 }: {
   state: "idle" | "listening" | "analyzing" | "submitting" | "results";
   activity?: number;
   isLight: boolean;
+  isDocked?: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const stateRef = useRef(state);
@@ -39,72 +42,52 @@ function CanvasWaveform({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animId: number;
-    let step = 0;
-    let currentAmp = 50;
-    let currentSpeed = 1;
-    const dpr = window.devicePixelRatio || 1;
+    let animId = 0;
+    let t = 0;
 
-    const handleResize = () => {
+    const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(rect.width * dpr, 300);
+      canvas.height = Math.max(rect.height * dpr, isDocked ? 60 : 120);
     };
 
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    const waves = [
-      { color: "rgba(192, 132, 252, 0.62)", speed: 0.032, shift: 0, freq: 2.8, ampMult: 1.15 },
-      { color: "rgba(59, 130, 246, 0.54)", speed: 0.045, shift: 2.1, freq: 2.4, ampMult: 1.05 },
-      { color: "rgba(56, 189, 248, 0.52)", speed: 0.058, shift: 4.2, freq: 3.2, ampMult: 0.92 },
-      { color: "rgba(168, 85, 247, 0.48)", speed: 0.026, shift: 1.2, freq: 2.0, ampMult: 1.2 },
-      { color: "rgba(244, 114, 182, 0.42)", speed: 0.038, shift: 3.0, freq: 2.6, ampMult: 0.98 },
-    ];
+    resize();
+    window.addEventListener("resize", resize);
 
     const render = () => {
-      const w = canvas.getBoundingClientRect().width;
-      const h = canvas.getBoundingClientRect().height;
+      t += 0.024;
+      const w = canvas.width;
+      const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
 
       const st = stateRef.current;
       const act = activityRef.current;
-      const isBusy = st === "analyzing" || st === "submitting";
-      const isListening = st === "listening";
+      const baseAmp = isDocked ? 8 : (st === "listening" ? 28 : st === "analyzing" ? 38 : 14) * act;
 
-      let targetAmp = 46;
-      if (isListening) targetAmp = 64 + act * 16;
-      if (isBusy) targetAmp = 105;
-      currentAmp += (targetAmp - currentAmp) * 0.06;
+      const layers = [
+        { color: isLight ? "rgba(59, 130, 246, 0.45)" : "rgba(56, 189, 248, 0.55)", freq: 0.008, speed: 1.0, phase: 0 },
+        { color: isLight ? "rgba(147, 51, 234, 0.40)" : "rgba(168, 85, 247, 0.50)", freq: 0.012, speed: 1.3, phase: 1.6 },
+        { color: isLight ? "rgba(236, 72, 153, 0.35)" : "rgba(244, 114, 182, 0.45)", freq: 0.010, speed: 0.8, phase: 3.2 },
+      ];
 
-      let targetSpeed = 1;
-      if (isListening) targetSpeed = 1.35;
-      if (isBusy) targetSpeed = 3.6;
-      currentSpeed += (targetSpeed - currentSpeed) * 0.05;
-
-      waves.forEach((wave) => {
+      layers.forEach((layer) => {
         ctx.beginPath();
+        const midY = h / 2;
         for (let x = 0; x <= w; x += 3) {
-          const normX = (x / w) * 4 - 2;
-          const bell = Math.exp(-Math.pow(normX, 2));
-          const yOffset = Math.sin(normX * wave.freq + step * wave.speed + wave.shift) * currentAmp * wave.ampMult * bell;
-          ctx.lineTo(x, h / 2 + yOffset);
+          const envelope = Math.sin((x / w) * Math.PI);
+          const y = midY + Math.sin(x * layer.freq + t * layer.speed + layer.phase) * baseAmp * envelope;
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
         }
-        for (let x = w; x >= 0; x -= 3) {
-          const normX = (x / w) * 4 - 2;
-          const bell = Math.exp(-Math.pow(normX, 2));
-          const yOffset = Math.sin(normX * wave.freq + step * wave.speed + wave.shift) * currentAmp * wave.ampMult * bell;
-          ctx.lineTo(x, h / 2 - yOffset);
-        }
-        ctx.closePath();
-        ctx.fillStyle = wave.color;
-        ctx.fill();
+        ctx.strokeStyle = layer.color;
+        ctx.lineWidth = isDocked ? 1.5 : 2.5;
+        ctx.stroke();
       });
 
-      step += currentSpeed;
       animId = requestAnimationFrame(render);
     };
 
@@ -112,9 +95,9 @@ function CanvasWaveform({
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [isLight, isDocked]);
 
   return (
     <div
@@ -123,13 +106,13 @@ function CanvasWaveform({
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        width: "min(98%, 980px)",
-        height: "220px",
+        width: isDocked ? "110%" : "min(98%, 980px)",
+        height: isDocked ? "90px" : "220px",
         zIndex: 0,
         pointerEvents: "none",
         mixBlendMode: isLight ? "multiply" : "screen",
-        opacity: state === "listening" ? 0.95 : state === "results" ? 0.25 : 0.78,
-        transition: "opacity 0.4s ease",
+        opacity: state === "listening" ? 0.95 : state === "results" ? 0.25 : isDocked ? 0.45 : 0.78,
+        transition: "opacity 0.4s ease, height 0.4s ease",
       }}
     >
       <canvas ref={canvasRef} style={{ width: "100%", height: "100%" }} />
@@ -141,10 +124,11 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [inputVal, setInputVal] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => loadStoredSession());
   const [isFocused, setIsFocused] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [statusNotice, setStatusNotice] = useState<string | null>(null);
+  const [isDocked, setIsDocked] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -159,6 +143,17 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
     : isListening || isFocused || inputVal.length > 0
     ? "listening"
     : "idle";
+
+  // Scroll spy: smooth transition between floating bottom bar and top navigation menu
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 260;
+      setIsDocked(scrolled);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Animate conic gradient angle smoothly on active without rotating element geometry
   useEffect(() => {
@@ -175,6 +170,11 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
     animId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animId);
   }, [isActive]);
+
+  // Persist session history
+  useEffect(() => {
+    saveStoredSession(messages);
+  }, [messages]);
 
   // Auto scroll messages to bottom
   useEffect(() => {
@@ -232,6 +232,7 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
         role: "model",
         text: response.text,
         timestamp: Date.now(),
+        source: response.source,
       };
       setMessages([...newHistory, botMessage]);
     } catch (err) {
@@ -248,9 +249,9 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
     }
   };
 
-
   const handleClearChat = () => {
     setMessages([]);
+    clearStoredSession();
   };
 
   // Toggle voice recognition
@@ -264,6 +265,7 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
         }
       }
       setIsListening(false);
+      setStatusNotice(null);
       return;
     }
 
@@ -271,40 +273,48 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      setStatusNotice("Speech recognition is not supported in this browser.");
+      setStatusNotice("Voice input isn't supported on this browser.");
       setTimeout(() => setStatusNotice(null), 3500);
       return;
     }
 
     try {
       const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
       recognition.continuous = false;
       recognition.interimResults = true;
-      recognition.lang = "en-US";
 
       recognition.onstart = () => {
         setIsListening(true);
-        setStatusNotice("Listening... speak your question");
+        setStatusNotice("Listening... speak your question.");
       };
 
       recognition.onresult = (event: any) => {
-        let transcript = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join("");
         setInputVal(transcript);
       };
 
       recognition.onerror = (event: any) => {
         console.warn("Speech recognition error:", event.error);
         setIsListening(false);
-        setStatusNotice(null);
+        if (event.error === "not-allowed") {
+          setStatusNotice("Microphone permission was denied.");
+        } else if (event.error === "no-speech") {
+          setStatusNotice("No speech detected. Try again.");
+        } else {
+          setStatusNotice("Voice error: " + event.error);
+        }
+        setTimeout(() => setStatusNotice(null), 3500);
       };
 
       recognition.onend = () => {
         setIsListening(false);
         setStatusNotice(null);
-        inputRef.current?.focus();
+        if (inputRef.current && inputRef.current.value.trim().length > 0) {
+          handleSend(inputRef.current.value);
+        }
       };
 
       recognitionRef.current = recognition;
@@ -312,40 +322,45 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
     } catch (err) {
       console.error("Could not start speech recognition:", err);
       setIsListening(false);
-      setStatusNotice("Microphone access unavailable.");
+      setStatusNotice("Could not access microphone.");
       setTimeout(() => setStatusNotice(null), 3000);
     }
   };
 
-  // Helper to format simple markdown (**bold**, *bullet points*, [links](url))
-  const formatMessageText = (text: string) => {
-    const lines = text.split("\n");
+  const formatMessageText = (rawText: string) => {
+    const lines = rawText.split("\n");
     return lines.map((line, idx) => {
-      const isBullet = line.trim().startsWith("- ") || line.trim().startsWith("* ");
-      const lineContent = isBullet ? line.trim().slice(2) : line;
+      const trimmed = line.trim();
+      const isBullet = trimmed.startsWith("- ") || trimmed.startsWith("* ") || /^\d+\.\s/.test(trimmed);
+      const cleanLine = isBullet
+        ? trimmed.replace(/^[-*]\s+/, "").replace(/^\d+\.\s+/, "")
+        : line;
 
-      const parts = lineContent.split(/(\*\*.*?\*\*|\[.*?\]\(.*?\))/g);
-
+      const parts = cleanLine.split(/(\*\*.*?\*\*|\[.*?\]\(.*?\))/g);
       const parsedParts = parts.map((part, pIdx) => {
         if (part.startsWith("**") && part.endsWith("**")) {
           return (
-            <strong key={pIdx} className="font-semibold text-[var(--gemini-bold)]">
+            <strong
+              key={pIdx}
+              className="font-bold"
+              style={{ color: "var(--gemini-bold, inherit)" }}
+            >
               {part.slice(2, -2)}
             </strong>
           );
         }
-        if (part.startsWith("[") && part.includes("](") && part.endsWith(")")) {
-          const title = part.slice(1, part.indexOf("]("));
-          const url = part.slice(part.indexOf("](") + 2, -1);
+        const linkMatch = part.match(/^\[(.*?)\]\((.*?)\)$/);
+        if (linkMatch) {
           return (
             <a
               key={pIdx}
-              href={url}
-              target="_blank"
+              href={linkMatch[2]}
+              target={linkMatch[2].startsWith("http") ? "_blank" : undefined}
               rel="noopener noreferrer"
-              className="text-blue-500 underline hover:text-blue-400 transition-colors"
+              className="underline font-semibold hover:opacity-80 transition-opacity"
+              style={{ color: isLight ? "#0284c7" : "#38bdf8" }}
             >
-              {title}
+              {linkMatch[1]}
             </a>
           );
         }
@@ -373,23 +388,35 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
   };
 
   return (
-    <div
-      className="fixed bottom-0 left-0 right-0 z-[80] pointer-events-none flex flex-col items-center justify-end px-3 sm:px-6"
+    <aside
+      aria-label="Ask Vikram AI Assistant"
+      className={`fixed z-[80] pointer-events-none transition-all duration-500 ease-out ${
+        isDocked ? "left-4 md:left-8" : "left-1/2 -translate-x-1/2"
+      }`}
       style={{
-        bottom: "20px",
-        paddingBottom: "max(12px, env(safe-area-inset-bottom, 12px))",
+        top: isDocked ? "12px" : "auto",
+        bottom: isDocked ? "auto" : "20px",
+        width: isDocked ? "min(320px, calc(100vw - 110px))" : "min(760px, calc(100vw - 28px))",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: isDocked ? "flex-start" : "center",
       }}
     >
-      {/* ── EXPANDABLE CONVERSATIONAL DRAWER / CARD ── */}
+      {/* ── EXPANDABLE CONVERSATIONAL DRAWER / CARD (FLOATING OR DOCKED) ── */}
       {isOpen && (
         <div
           ref={drawerRef}
           role="region"
           aria-label="Vikram AI Chat"
-          className="pointer-events-auto w-full max-w-[720px] mb-3 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col animate-in fade-in slide-in-from-bottom-6"
+          className={`pointer-events-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col ${
+            isDocked
+              ? "mt-2 w-[min(560px,calc(100vw-36px))] animate-in fade-in slide-in-from-top-4"
+              : "mb-3 w-full max-w-[720px] animate-in fade-in slide-in-from-bottom-6"
+          }`}
           style={{
-            height: "min(490px, 62vh)",
-            background: isLight ? "rgba(255, 255, 255, 0.96)" : "rgba(10, 15, 30, 0.95)",
+            order: isDocked ? 2 : 0, // In docked mode, drawer sits below the input bar
+            height: isDocked ? "min(520px, 76vh)" : "min(490px, 62vh)",
+            background: isLight ? "rgba(255, 255, 255, 0.97)" : "rgba(10, 15, 30, 0.96)",
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
             border: isLight ? "1px solid rgba(226, 232, 240, 0.9)" : "1px solid rgba(255, 255, 255, 0.14)",
@@ -398,7 +425,7 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
               : "0 25px 60px -10px rgba(0, 0, 0, 0.7), 0 0 40px rgba(139, 92, 246, 0.25)",
           }}
         >
-          {/* Drawer Header */}
+          {/* Drawer Header with Persistent AI Disclosure */}
           <div
             className="flex items-center justify-between px-5 py-3.5 border-b"
             style={{
@@ -423,12 +450,25 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
                   </defs>
                 </svg>
               </div>
-              <span className="text-sm font-semibold tracking-tight" style={{ color: isLight ? "#0f172a" : "#f1f5f9" }}>
-                Ask Vikram Anything
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold tracking-tight" style={{ color: isLight ? "#0f172a" : "#f1f5f9" }}>
+                  Ask Vikram Anything
+                </span>
+                {/* Persistent unobtrusive AI representation disclosure badge */}
+                <span
+                  className="text-[10.5px] font-medium px-2 py-0.5 rounded-full"
+                  style={{
+                    background: isLight ? "rgba(59, 130, 246, 0.1)" : "rgba(56, 189, 248, 0.15)",
+                    color: isLight ? "#0284c7" : "#38bdf8",
+                    border: isLight ? "1px solid rgba(59, 130, 246, 0.2)" : "1px solid rgba(56, 189, 248, 0.25)",
+                  }}
+                >
+                  AI Representation
+                </span>
+              </div>
             </div>
 
-            {/* Actions: Clear, Minimize */}
+            {/* Actions: Clear, Close */}
             <div className="flex items-center gap-1.5">
               {messages.length > 0 && (
                 <button
@@ -487,10 +527,10 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm mb-1" style={{ color: isLight ? "#0f172a" : "#f8fafc" }}>
-                    Ask Me Anything
+                    Ask Vikram Anything
                   </h4>
                   <p className="text-xs max-w-sm mx-auto" style={{ color: isLight ? "#64748b" : "#94a3b8" }}>
-                    I&apos;m Vikram. Ask me directly about scaling Copilot adoption at Microsoft, leading Cloud Security UX & Anthos at Google, or my design approach and frameworks.
+                    I&apos;m Vikram&apos;s AI representation. Ask me directly about scaling Copilot adoption at Microsoft, leading Cloud Security UX &amp; Anthos at Google, or my design approach and frameworks.
                   </p>
                 </div>
               </div>
@@ -532,31 +572,39 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
         </div>
       )}
 
-      {/* ── SUGGESTION PILLS (Subtle & Transparent Glassmorphic Design) ── */}
-      {(!isOpen || messages.length === 0) && (
-        <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-2.5 max-w-[760px] relative z-20">
-          {SUGGESTION_CHIPS.map((chip) => (
-            <button
-              key={chip}
-              type="button"
-              onClick={() => handleSend(chip)}
-              className="gemini-suggestion-chip px-4 sm:px-4.5 py-1.5 rounded-full cursor-pointer select-none text-xs sm:text-[13px] font-normal tracking-tight"
-              style={{
-                background: isLight ? "rgba(255, 255, 255, 0.38)" : "rgba(255, 255, 255, 0.05)",
-                backdropFilter: "blur(14px)",
-                WebkitBackdropFilter: "blur(14px)",
-                color: isLight ? "#334155" : "rgba(241, 245, 249, 0.85)",
-                border: isLight ? "1px solid rgba(255, 255, 255, 0.65)" : "1px solid rgba(255, 255, 255, 0.12)",
-                boxShadow: isLight
-                  ? "0 2px 10px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.8)"
-                  : "0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.08)",
-              }}
-            >
-              {chip}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* ── SUGGESTION PILLS (Disappear smoothly when scrolled into menu) ── */}
+      <div
+        className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 max-w-[760px] relative z-20 transition-all duration-300 ease-out"
+        style={{
+          order: 0,
+          opacity: isDocked || (isOpen && messages.length > 0) ? 0 : 1,
+          maxHeight: isDocked || (isOpen && messages.length > 0) ? "0px" : "60px",
+          marginBottom: isDocked || (isOpen && messages.length > 0) ? "0px" : "10px",
+          overflow: "hidden",
+          pointerEvents: isDocked || (isOpen && messages.length > 0) ? "none" : "auto",
+        }}
+      >
+        {SUGGESTION_CHIPS.map((chip) => (
+          <button
+            key={chip}
+            type="button"
+            onClick={() => handleSend(chip)}
+            className="gemini-suggestion-chip px-4 sm:px-4.5 py-1.5 rounded-full cursor-pointer select-none text-xs sm:text-[13px] font-normal tracking-tight"
+            style={{
+              background: isLight ? "rgba(255, 255, 255, 0.38)" : "rgba(255, 255, 255, 0.05)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              color: isLight ? "#334155" : "rgba(241, 245, 249, 0.85)",
+              border: isLight ? "1px solid rgba(255, 255, 255, 0.65)" : "1px solid rgba(255, 255, 255, 0.12)",
+              boxShadow: isLight
+                ? "0 2px 10px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.8)"
+                : "0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.08)",
+            }}
+          >
+            {chip}
+          </button>
+        ))}
+      </div>
 
       {/* ── STATUS NOTICE TOOLTIP / SPEECH FEEDBACK ── */}
       {statusNotice && (
@@ -573,27 +621,38 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
         </div>
       )}
 
-      {/* ── ADOPTIQ EXACT COMPONENT STAGE (Canvas Waveform + Glowing Command Bar) ── */}
-      <div className="adoptiq-input-stage pointer-events-auto">
+      {/* ── ADOPTIQ COMPONENT STAGE (Canvas Waveform + Glowing Command Bar) ── */}
+      <div
+        className="adoptiq-input-stage pointer-events-auto transition-all duration-500 ease-out"
+        style={{
+          order: 1,
+          width: isDocked ? "100%" : "min(100%, 1060px)",
+        }}
+      >
         {/* Exact AdoptIQ Siri/Gemini Canvas Waveform (flowing behind the bar) */}
-        <CanvasWaveform state={waveState} activity={inputVal.length > 0 ? 1.2 : 1} isLight={isLight} />
+        <CanvasWaveform
+          state={waveState}
+          activity={inputVal.length > 0 ? 1.2 : 1}
+          isLight={isLight}
+          isDocked={isDocked}
+        />
 
         {/* Command Bar Wrapper with Rotating Conic Glow on Active */}
-        <div ref={wrapperRef} className="command-bar-wrapper">
-          {/* Active Conic Gradient Glow Layer (Exact AdoptIQ Glow Effect) */}
+        <div
+          ref={wrapperRef}
+          className={`command-bar-wrapper ${isDocked ? "command-bar-wrapper--docked" : ""}`}
+        >
+          {/* Active Conic Gradient Glow Layer */}
           {isActive && (
             <>
-              {/* Outer Blurred Glow */}
               <div
                 className="conic-glow-layer blur-sm transition-opacity duration-500 opacity-40"
                 aria-hidden="true"
               />
-              {/* Crisp Border Glow */}
               <div
                 className="conic-glow-layer transition-opacity duration-500 opacity-100"
                 aria-hidden="true"
               />
-              {/* Inner Spill Glow Mask */}
               <div
                 className="conic-glow-layer ai-glow-spill-mask blur-md pointer-events-none inset-[-12%] opacity-25"
                 aria-hidden="true"
@@ -603,25 +662,40 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
 
           {/* Exact AdoptIQ Command Bar */}
           <div
-            className={`command-bar ${isFocused || isActive ? "command-bar--focused" : ""}`}
+            className={`command-bar ${isDocked ? "command-bar--docked" : ""} ${isFocused || isActive ? "command-bar--focused" : ""}`}
             onClick={() => inputRef.current?.focus()}
           >
-            {/* Formatted Content: "Hi, I'm Vikram. Ask me anything." (Unbolded) */}
+            {/* Formatted Content & Unobtrusive AI Disclosure */}
             <div className="relative flex-1 flex items-center min-w-0 h-full">
+              {/* Floating Placeholder / AI Disclosure */}
               {!inputVal && (
-                <div className="pointer-events-none absolute left-0 right-0 flex items-center text-[15px] sm:text-[16px] tracking-tight select-none z-10 overflow-hidden text-ellipsis whitespace-nowrap font-normal">
+                <div
+                  className="absolute left-0 top-0 bottom-0 flex items-center pointer-events-none select-none text-[13px] sm:text-[14.5px] font-normal leading-none"
+                  style={{
+                    letterSpacing: "-0.01em",
+                  }}
+                >
                   <span
-                    className="mr-1.5 shrink-0"
-                    style={{ color: isLight ? "#475569" : "#cbd5e1" }}
+                    className="mr-1.5 text-blue-500 font-semibold"
+                    style={{ fontSize: isDocked ? "11px" : "13px" }}
                   >
-                    Hi, I’m Vikram.
+                    ✦
                   </span>
-                  <span
-                    className="truncate"
-                    style={{ color: isLight ? "#64748b" : "#94a3b8" }}
-                  >
-                    Ask me anything.
-                  </span>
+                  {isDocked ? (
+                    <span
+                      className="truncate"
+                      style={{ color: isLight ? "#64748b" : "#94a3b8" }}
+                    >
+                      Ask Vikram&apos;s AI...
+                    </span>
+                  ) : (
+                    <span
+                      className="truncate"
+                      style={{ color: isLight ? "#64748b" : "#94a3b8" }}
+                    >
+                      Hi, I&apos;m Vikram. Ask me anything.
+                    </span>
+                  )}
                 </div>
               )}
 
@@ -642,17 +716,19 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
                     handleSend();
                   }
                 }}
-                className="w-full bg-transparent border-none outline-none text-[15px] sm:text-[16px] font-normal relative z-20"
+                className={`w-full bg-transparent border-none outline-none font-normal relative z-20 ${
+                  isDocked ? "text-[12.5px] sm:text-[13px]" : "text-[15px] sm:text-[16px]"
+                }`}
                 style={{
                   color: isLight ? "#070e24" : "#f8fafc",
                   caretColor: isLight ? "#7c3aed" : "#a855f7",
                 }}
-                aria-label="Ask Vikram anything"
+                aria-label="Ask Vikram AI anything"
               />
             </div>
 
-            {/* Right Action Controls: Voice Microphone + Exact AdoptIQ Circular Submit Button (sA) */}
-            <div className="flex items-center gap-2 relative z-20 shrink-0">
+            {/* Right Action Controls: Voice Microphone + Submit Button */}
+            <div className="flex items-center gap-1.5 sm:gap-2 relative z-20 shrink-0">
               {/* Microphone Voice Button */}
               <button
                 type="button"
@@ -662,19 +738,18 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
                 }}
                 title={isListening ? "Stop listening" : "Ask with voice"}
                 aria-label={isListening ? "Stop listening" : "Ask with voice"}
-                className={`p-2 rounded-full transition-all duration-200 cursor-pointer ${
+                className={`rounded-full transition-all duration-200 cursor-pointer ${
+                  isDocked ? "p-1.5" : "p-2"
+                } ${
                   isListening
                     ? "bg-red-500/20 text-red-500 scale-110 shadow-lg"
                     : "text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:scale-105 active:scale-95"
                 }`}
-                style={{
-                  boxShadow: isListening ? "0 0 0 4px rgba(239, 68, 68, 0.3)" : undefined,
-                }}
               >
-                <Mic size={18} strokeWidth={2} />
+                <Mic className={isDocked ? "w-3.5 h-3.5" : "w-4 h-4"} />
               </button>
 
-              {/* Exact AdoptIQ Submit Button with ArrowUp (sA from AdoptIQ) */}
+              {/* Exact AdoptIQ Circular Submit Button */}
               <button
                 type="button"
                 onClick={(e) => {
@@ -682,26 +757,16 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
                   handleSend();
                 }}
                 disabled={!inputVal.trim() || isLoading}
-                title="Send query"
-                aria-label="Run query"
-                className="submit-button"
+                title="Send message"
+                aria-label="Send message"
+                className={`submit-button ${isDocked ? "submit-button--docked" : ""}`}
               >
-                <ArrowUp size={22} strokeWidth={1.9} />
+                <ArrowUp className={isDocked ? "w-3 h-3" : "w-4 h-4"} strokeWidth={2.5} />
               </button>
             </div>
           </div>
         </div>
-
-        {/* ── SUBTITLE HELPER TEXT ── */}
-        <div
-          className="text-center text-[11px] sm:text-xs font-normal tracking-wide mt-1.5 select-none transition-colors relative z-20"
-          style={{
-            color: isLight ? "rgba(71, 85, 105, 0.85)" : "rgba(148, 163, 184, 0.75)",
-          }}
-        >
-          AI companion • Based on my work &amp; stories
-        </div>
       </div>
-    </div>
+    </aside>
   );
 }

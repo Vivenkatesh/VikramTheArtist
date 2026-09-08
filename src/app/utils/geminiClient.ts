@@ -1,15 +1,13 @@
 /**
  * Gemini API Client for Vikram's Conversational Concierge
+ * Version: 2026.1.0 (Connected to Versioned Persona & Hybrid Retrieval Engine)
  */
 
-import { VIKRAM_SYSTEM_INSTRUCTION, findCuratedAnswer } from "./vikramPersonaKnowledge";
+import { retrieveRelevantKnowledge } from "../knowledge/retrievalEngine";
+import { buildSystemInstruction } from "../knowledge/persona/promptBuilder";
+import { ChatMessage } from "../knowledge/visitorConversationState";
 
-export interface ChatMessage {
-  id: string;
-  role: "user" | "model";
-  text: string;
-  timestamp: number;
-}
+export type { ChatMessage };
 
 export function getStoredApiKey(): string | null {
   if (typeof window === "undefined") return null;
@@ -26,18 +24,32 @@ export function setStoredApiKey(key: string): void {
 }
 
 /**
- * Ask Gemini a question about Vikram, with automatic fallback to curated knowledge
+ * Ask Gemini a question about Vikram, with grounded hybrid retrieval and fallback
  */
 export async function askGemini(
   prompt: string,
   history: ChatMessage[] = []
-): Promise<{ text: string; source: "gemini" | "knowledge-base" }> {
+): Promise<{ text: string; source: "gemini" | "knowledge-base"; mode?: string }> {
+  // Step 1: Hybrid Retrieval Engine processes the query against published knowledge
+  const retrieval = retrieveRelevantKnowledge(prompt);
+
+  // If a strict boundary was triggered, immediately return the approved boundary wording
+  if (retrieval.matchedBoundary && retrieval.directAnswer) {
+    return {
+      text: retrieval.directAnswer,
+      source: "knowledge-base",
+      mode: retrieval.mode
+    };
+  }
+
   const apiKey = getStoredApiKey();
 
-  // If an API key is present, attempt live Gemini API call
+  // If an API key is present, execute live Gemini call with dynamically built prompt
   if (apiKey) {
     try {
-      const contents = history.map((msg) => ({
+      const dynamicSystemPrompt = buildSystemInstruction(retrieval);
+
+      const contents = history.slice(-6).map((msg) => ({
         role: msg.role === "user" ? "user" : "model",
         parts: [{ text: msg.text }],
       }));
@@ -57,7 +69,7 @@ export async function askGemini(
           },
           body: JSON.stringify({
             systemInstruction: {
-              parts: [{ text: VIKRAM_SYSTEM_INSTRUCTION }],
+              parts: [{ text: dynamicSystemPrompt }],
             },
             contents,
             generationConfig: {
@@ -73,23 +85,38 @@ export async function askGemini(
         const data = await response.json();
         const candidate = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (candidate) {
-          return { text: candidate, source: "gemini" };
+          return {
+            text: candidate,
+            source: "gemini",
+            mode: retrieval.mode
+          };
         }
       } else {
         console.warn("Gemini API call failed, status:", response.status);
       }
     } catch (err) {
-      console.warn("Gemini API network error, falling back to curated knowledge:", err);
+      console.warn("Gemini API network error, falling back to retrieval engine:", err);
     }
   }
 
-  // Fallback to high-fidelity curated knowledge engine
-  const curatedMatch = findCuratedAnswer(prompt);
-  if (curatedMatch) {
-    return { text: curatedMatch, source: "knowledge-base" };
+  // Step 2: If Gemini is offline or not configured, return the high-confidence direct answer
+  if (retrieval.directAnswer) {
+    return {
+      text: retrieval.directAnswer,
+      source: "knowledge-base",
+      mode: retrieval.mode
+    };
   }
 
-  // Default direct first-person response synthesized from verified database
+  // Step 3: Default grounded synthesis from retrieved context chunks
+  if (retrieval.contextChunks.length > 0) {
+    return {
+      text: retrieval.contextChunks[0],
+      source: "knowledge-base",
+      mode: retrieval.mode
+    };
+  }
+
   return {
     text: "I am a Product Design Leader with 18+ years of global experience across Microsoft, Google, McKinsey, and Oracle. Currently, I lead Copilot Adoption Community experiences at Microsoft, scaling enterprise usage to 1.5M+ MAU across 850+ tenants and expanding Copilot weekly active users from 936K to 3.4M. Ask me about my work on Copilot, Google Cloud & Anthos, enterprise AI workflows, or my design leadership philosophy.",
     source: "knowledge-base",
