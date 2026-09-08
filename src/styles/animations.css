@@ -88,7 +88,15 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .gemini-suggestion-chip:hover {
-  transform: translateY(-2px) scale(1.015);
+  transform: translateY(-1.5px);
+  background: rgba(255, 255, 255, 0.58) !important;
+  border-color: rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+}
+.dark .gemini-suggestion-chip:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
 }
 .gemini-suggestion-chip:active {
   transform: translateY(0) scale(0.98);

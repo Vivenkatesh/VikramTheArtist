@@ -532,22 +532,24 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
         </div>
       )}
 
-      {/* ── SUGGESTION PILLS (Modeled on screenshot with cyan/blue glow border) ── */}
+      {/* ── SUGGESTION PILLS (Subtle & Transparent Glassmorphic Design) ── */}
       {(!isOpen || messages.length === 0) && (
-        <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-2.5 max-w-[760px] relative z-20">
+        <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-2.5 max-w-[760px] relative z-20">
           {SUGGESTION_CHIPS.map((chip) => (
             <button
               key={chip}
               type="button"
               onClick={() => handleSend(chip)}
-              className="gemini-suggestion-chip px-4 sm:px-5 py-1.5 sm:py-2 rounded-full backdrop-blur-md cursor-pointer select-none text-xs sm:text-[13px] font-medium tracking-tight"
+              className="gemini-suggestion-chip px-4 sm:px-4.5 py-1.5 rounded-full cursor-pointer select-none text-xs sm:text-[13px] font-normal tracking-tight"
               style={{
-                background: isLight ? "rgba(255, 255, 255, 0.92)" : "rgba(15, 23, 42, 0.90)",
-                color: isLight ? "#0c1c4f" : "#f1f5f9",
-                border: isLight ? "1.5px solid rgba(56, 189, 248, 0.55)" : "1.5px solid rgba(56, 189, 248, 0.45)",
+                background: isLight ? "rgba(255, 255, 255, 0.38)" : "rgba(255, 255, 255, 0.05)",
+                backdropFilter: "blur(14px)",
+                WebkitBackdropFilter: "blur(14px)",
+                color: isLight ? "#334155" : "rgba(241, 245, 249, 0.85)",
+                border: isLight ? "1px solid rgba(255, 255, 255, 0.65)" : "1px solid rgba(255, 255, 255, 0.12)",
                 boxShadow: isLight
-                  ? "0 4px 14px rgba(56, 189, 248, 0.20), 0 1px 3px rgba(0, 0, 0, 0.05)"
-                  : "0 4px 18px rgba(56, 189, 248, 0.22), 0 0 12px rgba(139, 92, 246, 0.15)",
+                  ? "0 2px 10px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.8)"
+                  : "0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.08)",
               }}
             >
               {chip}
@@ -604,19 +606,19 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
             className={`command-bar ${isFocused || isActive ? "command-bar--focused" : ""}`}
             onClick={() => inputRef.current?.focus()}
           >
-            {/* Formatted Content: "Hi, I'm Vikram. Ask me anything." */}
+            {/* Formatted Content: "Hi, I'm Vikram. Ask me anything." (Unbolded) */}
             <div className="relative flex-1 flex items-center min-w-0 h-full">
               {!inputVal && (
-                <div className="pointer-events-none absolute left-0 right-0 flex items-center text-[15px] sm:text-[16px] tracking-tight select-none z-10 overflow-hidden text-ellipsis whitespace-nowrap">
+                <div className="pointer-events-none absolute left-0 right-0 flex items-center text-[15px] sm:text-[16px] tracking-tight select-none z-10 overflow-hidden text-ellipsis whitespace-nowrap font-normal">
                   <span
-                    className="font-bold mr-1.5 shrink-0"
-                    style={{ color: isLight ? "#070e24" : "#ffffff" }}
+                    className="mr-1.5 shrink-0"
+                    style={{ color: isLight ? "#475569" : "#cbd5e1" }}
                   >
                     Hi, I’m Vikram.
                   </span>
                   <span
-                    className="font-normal truncate"
-                    style={{ color: isLight ? "#475569" : "#cbd5e1" }}
+                    className="truncate"
+                    style={{ color: isLight ? "#64748b" : "#94a3b8" }}
                   >
                     Ask me anything.
                   </span>
