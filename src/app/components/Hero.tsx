@@ -261,14 +261,7 @@ export function Hero({ mode = "dark" }: HeroProps) {
         )}
 
         <div className="hero-title-block max-w-[780px] pt-12 sm:pt-16 md:pt-24 lg:pt-28 relative z-20 text-left items-start" style={{ transform: "translateY(50px)" }}>
-          <div className="hero-heading-container flex flex-col items-start text-left min-h-[140px] sm:min-h-[160px]">
-            {/* Greeting */}
-            <p
-              className={`mb-3 sm:mb-4 flex items-center gap-1.5 ${isLight ? "text-[#475569]" : "text-white/75"}`}
-              style={{ fontFamily: "'Inter', sans-serif", fontWeight: 400, fontSize: "clamp(20px, 1.8vw, 24px)", lineHeight: 1.3 }}
-            >
-              <span>Hi, I'm Vikram</span>
-            </p>
+          <div className="hero-heading-container flex flex-col items-start text-left min-h-[105px] sm:min-h-[125px]">
 
             {/* Main Editorial Serif Heading */}
             <h1

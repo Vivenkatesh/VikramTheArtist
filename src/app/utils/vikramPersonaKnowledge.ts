@@ -188,9 +188,19 @@ export const VIKRAM_CURATED_KNOWLEDGE: KnowledgeQAPair[] = [
     answer: "My work centers on six core disciplines:\n1. **AI-First Design & Agentic Workflows**\n2. **Enterprise Systems & Scaled Architectures**\n3. **Design Leadership, Roadmapping & Scoping**\n4. **Data Storytelling & Analytics UX**\n5. **High-Fidelity Interaction Design & Rapid Prototyping**\n6. **Design Mentorship, Team Rituals & Culture**"
   },
   {
-    keywords: ["philosophy", "design philosophy", "approach", "how you design"],
-    question: "What is your design philosophy?",
-    answer: "I believe the strongest design leaders balance high-level strategic vision—roadmaps, scoping, executive alignment—with rigorous hands-on execution in interaction craft, prototyping, and systems architecture. In the AI era, my focus is designing AI-first products that feel human, transparent, and indispensable."
+    keywords: ["design approach", "what's your design approach", "what is your design approach", "philosophy", "design philosophy", "approach", "how you design"],
+    question: "What's your design approach?",
+    answer: "My approach balances high-level strategic vision—roadmaps, scoping, executive alignment—with rigorous hands-on execution in interaction craft, prototyping, and systems architecture. In the AI era, my focus is designing AI-first products that feel human, transparent, and indispensable."
+  },
+  {
+    keywords: ["why did you create adopt", "why create adopt", "create adopt", "created adopt", "adopt framework", "why adopt"],
+    question: "Why did you create ADOPT?",
+    answer: "I created the ADOPT framework to solve a massive enterprise problem: organizations buying thousands of AI seats that go underutilized. ADOPT provides a practical, human-centered blueprint—spanning Awareness, Discovery, Optimization, Proficiency, and Transformation—to systematically turn initial enterprise curiosity into habituated, high-impact workflows."
+  },
+  {
+    keywords: ["what inspires you", "inspires you", "inspiration", "what drives you"],
+    question: "What inspires you?",
+    answer: "I'm inspired by turning deeply complex, intimidating technologies—like enterprise AI systems and distributed cloud infrastructures—into experiences that feel effortless, intuitive, and genuinely empowering for people. I also draw immense inspiration from architectural harmony, spatial design, and mentoring creative teams."
   },
   {
     keywords: ["salary", "rate", "compensation", "how much", "cost"],
