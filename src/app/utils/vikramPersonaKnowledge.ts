@@ -35,6 +35,20 @@ export const VIKRAM_DATABASE = {
     "High-Fidelity Interaction Design & Rapid Prototyping",
     "Design Mentorship, Team Rituals & Culture"
   ],
+  frameworks: {
+    adopt: {
+      name: "ADOPT Framework",
+      creator: "Vikram Venkatesh",
+      purpose: "An enterprise behavioral adoption framework designed to bridge the gap between purchasing AI licenses and achieving genuine, habitual employee engagement and organizational value.",
+      stages: [
+        "Awareness: Building enterprise visibility, clarity, and executive sponsorship.",
+        "Discovery: Hands-on exploration, experimentation, and identifying high-impact use cases.",
+        "Optimization: Everyday habituation, workflow integration, and friction reduction.",
+        "Proficiency: Advanced prompt crafting, mastery, and peer community advocacy.",
+        "Transformation: Scaling autonomous agentic workflows and realizing measurable business ROI."
+      ]
+    }
+  },
   experience_history: [
     {
       company: "Microsoft",
@@ -143,7 +157,7 @@ export interface KnowledgeQAPair {
 
 export const VIKRAM_CURATED_KNOWLEDGE: KnowledgeQAPair[] = [
   {
-    keywords: ["google", "anthos", "security", "nyc", "new york", "cloud security", "scc"],
+    keywords: ["what did you do at google", "did you do at google", "google", "anthos", "security", "nyc", "new york", "cloud security", "scc", "work at google"],
     question: "What did you do at Google?",
     answer: "At Google in NYC, I spent 39 months as Lead UX Designer driving AI-driven product design strategies and 0-to-1 cloud security roadmaps within Google Cloud. I led the UX overhaul of Anthos, navigating heavy engineering constraints to accelerate adoption by 30% and boost CSAT by 25%. I also automated complex analytical workflows into intuitive cloud security experiences while mentoring design teams across high-visibility initiatives."
   },
@@ -173,7 +187,7 @@ export const VIKRAM_CURATED_KNOWLEDGE: KnowledgeQAPair[] = [
     answer: "Over my career, I've designed enterprise solutions for global brands including Apple Inc., Citi, GSK, StateFarm, American Express, Siemens, Hilton, Novartis, Netgear, IBM, and Comcast."
   },
   {
-    keywords: ["experience", "career", "journey", "companies", "where", "background", "years"],
+    keywords: ["tell me about your career journey", "about your career journey", "your career journey", "career journey", "career path", "career history", "experience", "career", "journey", "companies", "where", "background", "years"],
     question: "Tell me about your career journey.",
     answer: "I bring 18+ years of product design leadership across the United States, Europe (Prague), and India. Currently, I'm Lead Product Designer at **Microsoft** driving Copilot adoption; previously, I was Senior Principal Product Designer at **Oracle**, Lead UX Designer at **Google** (Cloud Security & Anthos in NYC), Lead Product Designer at **McKinsey & Company** (Prague), and Senior UX Designer at **Cognizant & TCS**."
   },
@@ -193,9 +207,9 @@ export const VIKRAM_CURATED_KNOWLEDGE: KnowledgeQAPair[] = [
     answer: "My approach balances high-level strategic vision—roadmaps, scoping, executive alignment—with rigorous hands-on execution in interaction craft, prototyping, and systems architecture. In the AI era, my focus is designing AI-first products that feel human, transparent, and indispensable."
   },
   {
-    keywords: ["why did you create adopt", "why create adopt", "create adopt", "created adopt", "adopt framework", "why adopt"],
-    question: "Why did you create ADOPT?",
-    answer: "I created the ADOPT framework to solve a massive enterprise problem: organizations buying thousands of AI seats that go underutilized. ADOPT provides a practical, human-centered blueprint—spanning Awareness, Discovery, Optimization, Proficiency, and Transformation—to systematically turn initial enterprise curiosity into habituated, high-impact workflows."
+    keywords: ["explain adopt framework", "explain adopt", "what is adopt framework", "what is the adopt framework", "adopt framework", "why did you create adopt", "why create adopt", "create adopt", "created adopt", "why adopt"],
+    question: "Explain the ADOPT framework.",
+    answer: "The ADOPT framework is an enterprise behavioral adoption model I created to solve AI underutilization across organizations. It guides teams across five progressive stages:\n1. **Awareness:** Establishing executive sponsorship, strategic purpose, and broad visibility.\n2. **Discovery:** Empowering hands-on experimentation to uncover high-impact use cases.\n3. **Optimization:** Daily habituation, workflow integration, and removing friction.\n4. **Proficiency:** Advanced prompt crafting, mastery, and community advocacy champions.\n5. **Transformation:** Autonomous agentic business workflows delivering measurable ROI.\n\nIt bridges the gap between licensing enterprise AI seats and achieving sustained, measurable business impact."
   },
   {
     keywords: ["what inspires you", "inspires you", "inspiration", "what drives you"],

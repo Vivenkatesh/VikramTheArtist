@@ -7,9 +7,9 @@ interface GeminiPromptBarProps {
 }
 
 const SUGGESTION_CHIPS = [
-  "What's your design approach?",
-  "Why did you create ADOPT?",
-  "What inspires you?",
+  "What did you do at Google",
+  "Explain Adopt framework",
+  "Tell me about your career journey",
 ];
 
 /**
