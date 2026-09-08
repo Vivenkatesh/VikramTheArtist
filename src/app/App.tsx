@@ -8,8 +8,8 @@ import "../styles/animations.css";
 import { ClientsSection } from "./components/ClientsSection";
 import { SkillsSection } from "./components/SkillsSection";
 import { FooterCTA } from "./components/FooterCTA";
-import { LightClouds } from "./components/LightClouds";
 import { SpaceSparkles } from "./components/SpaceSparkles";
+import { GeminiPromptBar } from "./components/GeminiPromptBar";
 
 const CaseStudyAdopt = lazy(() => import("./components/CaseStudyAdopt").then(m => ({ default: m.CaseStudyAdopt })));
 const CaseStudyAdoptV2 = lazy(() => import("./components/playbook/CaseStudyAdoptV2").then(m => ({ default: m.CaseStudyAdoptV2 })));
@@ -1745,6 +1745,7 @@ export default function App() {
         <SkillsSection />
         <FooterCTA />
       </main>
+      <GeminiPromptBar mode={themeMode} />
     </div>
   );
 }
