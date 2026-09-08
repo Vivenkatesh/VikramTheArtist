@@ -89,9 +89,9 @@ export async function askGemini(
     return { text: curatedMatch, source: "knowledge-base" };
   }
 
-  // Default intelligent response synthesized from Vikram's core profile
+  // Default direct first-person response synthesized from verified database
   return {
-    text: "I am Vikram's AI concierge! Vikram is currently a **Product Design Lead at Microsoft**, where he leads Copilot adoption design across Viva Engage and Microsoft Teams. Previously, he led 0-to-1 Cloud Security UX at **Google** in NYC, was Lead Product Designer at **McKinsey & Company** in Prague, and held senior design roles at **Oracle** and **Cognizant** over an 18+ year career. Feel free to ask me about his work on Copilot, Google Cloud, or his **ADOPT** behavioral framework!",
+    text: "I am a Product Design Leader with 18+ years of global experience across Microsoft, Google, McKinsey, and Oracle. Currently, I lead Copilot Adoption Community experiences at Microsoft, scaling enterprise usage to 1.5M+ MAU across 850+ tenants and expanding Copilot weekly active users from 936K to 3.4M. Ask me about my work on Copilot, Google Cloud & Anthos, enterprise AI workflows, or my design leadership philosophy.",
     source: "knowledge-base",
   };
 }

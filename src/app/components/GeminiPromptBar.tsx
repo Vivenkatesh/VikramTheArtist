@@ -210,7 +210,7 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
                 </svg>
               </div>
               <span className="text-sm font-medium tracking-tight" style={{ color: isLight ? "#0f172a" : "#f1f5f9" }}>
-                Ask Vikram AI
+                Ask Me Anything
               </span>
               <span
                 className="text-[10px] font-medium px-2 py-0.5 rounded-full border"
@@ -339,10 +339,10 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm mb-1" style={{ color: isLight ? "#0f172a" : "#f8fafc" }}>
-                    Hi, I&apos;m Vikram&apos;s AI Concierge
+                    Ask Me Anything
                   </h4>
                   <p className="text-xs max-w-sm mx-auto" style={{ color: isLight ? "#64748b" : "#94a3b8" }}>
-                    Ask me anything about Vikram&apos;s 18+ years journey, Copilot leadership at Microsoft, Google Cloud security, or his ADOPT framework.
+                    I&apos;m Vikram Venkatesh. Ask me directly about scaling Copilot adoption at Microsoft, leading Cloud Security UX & Anthos at Google, or my 18+ years in product design leadership.
                   </p>
                 </div>
               </div>
@@ -373,7 +373,7 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
             {isLoading && (
               <div className="flex items-center gap-2 text-xs py-2 px-3 rounded-xl max-w-xs" style={{ background: isLight ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.04)" }}>
                 <span className="inline-block animate-spin text-blue-500">✦</span>
-                <span style={{ color: isLight ? "#64748b" : "#94a3b8" }}>Thinking & querying Vikram&apos;s journey...</span>
+                <span style={{ color: isLight ? "#64748b" : "#94a3b8" }}>Thinking & querying verified database...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -428,7 +428,7 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
           <div
             className="shrink-0 flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer hover:scale-110 transition-transform"
             onClick={() => setIsOpen(!isOpen)}
-            title="Toggle Vikram AI Concierge"
+            title="Toggle Ask Me Anything"
           >
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
               <path
@@ -460,12 +460,12 @@ export function GeminiPromptBar({ mode }: GeminiPromptBarProps) {
                 handleSend();
               }
             }}
-            placeholder="Ask me anything about Vikram's journey, Copilot, Google..."
+            placeholder="Ask me anything about my work at Microsoft, Google, Anthos..."
             className="flex-1 bg-transparent border-none outline-none text-xs sm:text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors"
             style={{
               color: isLight ? "#0f172a" : "#f8fafc",
             }}
-            aria-label="Ask Vikram AI"
+            aria-label="Ask Vikram anything"
           />
 
           {/* Send Button */}
