@@ -19,7 +19,13 @@ export const VIKRAM_DATABASE = {
       "Designing the Mobile UX",
       "Design for Social Innovation & Sustainable Development"
     ],
-    global_footprint: ["United States", "Europe (Prague)", "India"]
+    global_footprint: ["United States", "Europe (Prague)", "India"],
+    current_status: {
+      current_city: "Hyderabad",
+      current_country: "India",
+      current_role: "Lead Product Designer at Microsoft (Hyderabad, India)",
+      relocation_intent: "Actively exploring senior design leadership roles in London (UK) and returning to the US"
+    }
   },
   core_competencies: [
     "AI-First Design & Agentic Workflows",
@@ -190,6 +196,11 @@ export const VIKRAM_CURATED_KNOWLEDGE: KnowledgeQAPair[] = [
     keywords: ["resume", "cv", "download", "contact", "linkedin", "email", "reach"],
     question: "How can I contact you or view your resume?",
     answer: "You can reach me directly at vikramtheartist@gmail.com or connect with me on [LinkedIn](https://www.linkedin.com/in/vikramtheartist). My full resume is also accessible from the footer of this portfolio."
+  },
+  {
+    keywords: ["location", "where are you", "based", "city", "hyderabad", "india", "relocate", "relocation", "london", "uk", "us", "current status"],
+    question: "Where are you currently based, and are you open to relocation?",
+    answer: "I am currently based in Hyderabad, India, working as Lead Product Designer at Microsoft. I am actively exploring senior design leadership roles in London (UK) and returning to the US."
   }
 ];
 
