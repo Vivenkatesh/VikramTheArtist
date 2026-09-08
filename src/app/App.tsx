@@ -13,17 +13,15 @@ import { SpaceSparkles } from "./components/SpaceSparkles";
 
 const CaseStudyAdopt = lazy(() => import("./components/CaseStudyAdopt").then(m => ({ default: m.CaseStudyAdopt })));
 const CaseStudyAdoptV2 = lazy(() => import("./components/playbook/CaseStudyAdoptV2").then(m => ({ default: m.CaseStudyAdoptV2 })));
-const CaseStudyDataSecurity = lazy(() => import("./components/playbook/CaseStudyDataSecurity").then(m => ({ default: m.CaseStudyDataSecurity })));
 const AdoptLandingPage = lazy(() => import("./components/adopt/AdoptLandingPage").then(m => ({ default: m.AdoptLandingPage })));
 const VibeCodingPage = lazy(() => import("./components/vibecoding/VibeCodingPage").then(m => ({ default: m.VibeCodingPage })));
 const Feedback360Page = lazy(() => import("./components/feedback/Feedback360Page").then(m => ({ default: m.Feedback360Page })));
 
-type Route = "home" | "adopt" | "scale-copilot" | "scale-copilot-engage" | "adopt-v2" | "adopt-landing" | "vibe-coding" | "feedback-360" | "data-security";
+type Route = "home" | "adopt" | "scale-copilot" | "scale-copilot-engage" | "adopt-v2" | "adopt-landing" | "vibe-coding" | "feedback-360";
 type ThemeMode = "dark" | "light";
 
 const routeFromPath = (): Route => {
   const p = window.location.pathname.replace(/\/$/, "");
-  if (p.endsWith("/data-security") || p.endsWith("/work/data-security") || p.endsWith("/playbook/data-security")) return "data-security";
   if (p.endsWith("/work/feedback-360") || p.endsWith("/feedback-360")) return "feedback-360";
   if (p.endsWith("/adopt-landing") || p.endsWith("/adopt")) return "adopt-landing";
   if (p.endsWith("/scale-copilot-engage") || p.endsWith("/work/scale-copilot-engage")) return "scale-copilot-engage";
@@ -1647,13 +1645,7 @@ export default function App() {
         />
       </Suspense>
     );
-  }
-  if (route === "data-security") {
-    return (
-      <Suspense fallback={<div className="min-h-screen" style={{ background: "var(--bg-page)" }} />}>
-        <CaseStudyDataSecurity onBack={() => navigate("home")} />
-      </Suspense>
-    );
+
   }
   if (route === "vibe-coding") {
     return (

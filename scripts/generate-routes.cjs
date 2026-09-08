@@ -111,36 +111,6 @@ const routes = [
     ogTitle: "Vibe Coding Showcase — AI-Assisted Engineering & Prototypes",
     ogDescription: "Curated collection of production-grade AI applications, collaborative audio rooms, and interactive physics engines built with autonomous agentic workflows.",
     ogUrl: "https://vikramtheartist.com/vibe-coding",
-  },
-  {
-    path: "data-security",
-    title: "Data Security Posture Management (DSPM) — Cloud Security Case Study | Vikram Venkatesh",
-    description: "How Vikram Venkatesh designed the 0-to-1 Data Security Posture Management experience in Google Cloud Security Command Center with AI-assisted discovery, posture scoring, and automated remediation.",
-    canonical: "https://vikramtheartist.com/data-security",
-    robots: "index, follow, max-image-preview:large",
-    ogTitle: "Data Security Posture Management (DSPM) — Cloud Security Case Study",
-    ogDescription: "A principal UX design case study on building automated cloud data discovery, classification, and posture remediation at Google Cloud scale.",
-    ogUrl: "https://vikramtheartist.com/data-security",
-  },
-  {
-    path: "work/data-security",
-    title: "Data Security Posture Management (DSPM) — Cloud Security Case Study | Vikram Venkatesh",
-    description: "How Vikram Venkatesh designed the 0-to-1 Data Security Posture Management experience in Google Cloud Security Command Center.",
-    canonical: "https://vikramtheartist.com/data-security",
-    robots: "noindex, follow",
-    ogTitle: "Data Security Posture Management (DSPM) — Cloud Security Case Study",
-    ogDescription: "A principal UX design case study on building automated cloud data discovery, classification, and posture remediation at Google Cloud scale.",
-    ogUrl: "https://vikramtheartist.com/data-security",
-  },
-  {
-    path: "playbook/data-security",
-    title: "Data Security Posture Management (DSPM) — Cloud Security Case Study | Vikram Venkatesh",
-    description: "How Vikram Venkatesh designed the 0-to-1 Data Security Posture Management experience in Google Cloud Security Command Center.",
-    canonical: "https://vikramtheartist.com/data-security",
-    robots: "noindex, follow",
-    ogTitle: "Data Security Posture Management (DSPM) — Cloud Security Case Study",
-    ogDescription: "A principal UX design case study on building automated cloud data discovery, classification, and posture remediation at Google Cloud scale.",
-    ogUrl: "https://vikramtheartist.com/data-security",
   }
 ];
 
