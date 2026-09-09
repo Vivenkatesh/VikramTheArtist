@@ -1634,6 +1634,31 @@ export default function App() {
     });
   }, []);
 
+  const isLight = themeMode === "light";
+  const [isDocked, setIsDocked] = useState(false);
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+
+  useEffect(() => {
+    if (route !== "home") return;
+
+    const onScroll = () => {
+      const sy = window.scrollY;
+      const workEl = document.getElementById("work");
+      const workTop = workEl ? workEl.getBoundingClientRect().top + window.scrollY : 750;
+      // Appear at the top with the menu before "My work" section
+      const dockThreshold = Math.max(220, workTop - 500);
+
+      if (!isDocked && sy >= dockThreshold) {
+        setIsDocked(true);
+      } else if (isDocked && sy < dockThreshold - 40) {
+        setIsDocked(false);
+      }
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isDocked, route]);
+
   if (route === "feedback-360") {
     return (
       <Suspense fallback={<div className="min-h-screen" style={{ background: "var(--bg-page)" }} />}>
@@ -1699,29 +1724,6 @@ export default function App() {
       </Suspense>
     );
   }
-
-  const isLight = themeMode === "light";
-  const [isDocked, setIsDocked] = useState(false);
-  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const sy = window.scrollY;
-      const workEl = document.getElementById("work");
-      const workTop = workEl ? workEl.getBoundingClientRect().top + window.scrollY : 750;
-      // Appear at the top with the menu before "My work" section
-      const dockThreshold = Math.max(220, workTop - 500);
-
-      if (!isDocked && sy >= dockThreshold) {
-        setIsDocked(true);
-      } else if (isDocked && sy < dockThreshold - 40) {
-        setIsDocked(false);
-      }
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isDocked]);
 
   return (
     <div
