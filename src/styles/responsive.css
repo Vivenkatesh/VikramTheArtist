@@ -105,13 +105,53 @@ html, body {
 }
 
 @media (max-width: 767px) {
+  .ama-mobile-active-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    pointer-events: auto;
+    backdrop-filter: blur(18px) saturate(115%);
+    -webkit-backdrop-filter: blur(18px) saturate(115%);
+  }
+
+  .ama-mobile-close {
+    position: fixed;
+    top: max(16px, env(safe-area-inset-top, 16px));
+    right: 20px;
+    z-index: 115;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 999px;
+    color: #334155;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+    cursor: pointer;
+  }
+
+  .dark .ama-mobile-close {
+    color: #e2e8f0;
+    background: rgba(30, 41, 59, 0.94);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .light-skater-astro {
+    right: -92px !important;
+    width: 230px !important;
+  }
+
   .hero-section {
     min-height: auto !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: flex-start !important;
     align-items: center !important;
-    padding: clamp(115px, calc(12vh + 50px), 140px) 20px 0 !important;
+    pointer-events: none;
+    padding: clamp(72px, calc(8vh + 26px), 96px) 20px 120px !important;
   }
 
   .hero-title-block {
@@ -119,10 +159,22 @@ html, body {
     margin: 0 !important;
     width: 100% !important;
     transform: none !important;
+    pointer-events: auto;
+  }
+
+  [data-theme="light"] .hero-title-block {
+    padding-top: 0 !important;
   }
 
   .astro-wrapper {
     display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .ama-mobile-active-backdrop,
+  .ama-mobile-close {
+    display: none;
   }
 }
 
@@ -205,8 +257,14 @@ html, body {
 
 @media (max-width: 767px) {
   #work {
-    margin-top: 180px !important;
+    margin-top: 80px !important;
     padding-top: 0px !important;
+  }
+
+  #work .work-reveal-header {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    box-sizing: border-box;
   }
 }
 
@@ -307,7 +365,7 @@ html, body {
   margin-top: 350px !important;
 }
 
-@media (max-width: 1023px) {
+@media (min-width: 768px) and (max-width: 1023px) {
   [data-theme="dark"] #work {
     margin-top: 430px !important;
   }
@@ -397,7 +455,7 @@ html, body {
   }
 
   .tl-spine {
-    left: 42px !important;
+    left: 18px !important;
     width: 1.5px !important;
     transform: translateX(-50%) !important;
   }
@@ -414,7 +472,7 @@ html, body {
   .tl-dot-col {
     width: 36px !important;
     flex-shrink: 0 !important;
-    margin-right: 14px !important;
+    margin-right: 12px !important;
   }
   .tl-dot-col > div {
     width: 36px !important;

@@ -136,7 +136,7 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDock
         </div>
 
         {/* ── Mobile Hamburger Toggle Button (md:hidden) ── */}
-        <div className="flex md:hidden items-center gap-3 pointer-events-auto">
+        <div className="ml-auto flex md:hidden items-center gap-3 pointer-events-auto">
           {onToggleTheme && (
             <button
               type="button"
@@ -188,7 +188,9 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDock
       {/* ── Mobile Menu Dropdown Drawer Overlay ── */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 md:hidden flex flex-col justify-start pt-20 px-5 pb-8 backdrop-blur-2xl bg-[#060913]/95 transition-all animate-fadeIn"
+          className={`fixed inset-0 z-40 md:hidden flex flex-col justify-start pt-20 px-5 pb-8 backdrop-blur-2xl transition-all animate-fadeIn ${
+            isLight ? "bg-white/95" : "bg-[#060913]/95"
+          }`}
           onClick={() => setMobileMenuOpen(false)}
         >
           <div
@@ -198,19 +200,23 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDock
             <a
               href="#work"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-white text-base font-medium tracking-wide hover:bg-white/[0.08] transition-all"
+              className={`flex items-center justify-between p-4 rounded-2xl border text-base font-medium tracking-wide transition-all ${
+                isLight ? "bg-white/80 border-slate-200 text-slate-900 hover:bg-white" : "bg-white/[0.04] border-white/10 text-white hover:bg-white/[0.08]"
+              }`}
             >
               <span>My Work</span>
-              <span className="text-white/40">→</span>
+              <span className={isLight ? "text-slate-400" : "text-white/40"}>→</span>
             </a>
 
             <a
               href="#experience"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-white text-base font-medium tracking-wide hover:bg-white/[0.08] transition-all"
+              className={`flex items-center justify-between p-4 rounded-2xl border text-base font-medium tracking-wide transition-all ${
+                isLight ? "bg-white/80 border-slate-200 text-slate-900 hover:bg-white" : "bg-white/[0.04] border-white/10 text-white hover:bg-white/[0.08]"
+              }`}
             >
               <span>My Experience</span>
-              <span className="text-white/40">→</span>
+              <span className={isLight ? "text-slate-400" : "text-white/40"}>→</span>
             </a>
 
             <a
@@ -222,10 +228,12 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDock
                   onNavigateVibeCoding();
                 }
               }}
-              className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-white text-base font-medium tracking-wide hover:bg-white/[0.08] transition-all"
+              className={`flex items-center justify-between p-4 rounded-2xl border text-base font-medium tracking-wide transition-all ${
+                isLight ? "bg-white/80 border-slate-200 text-slate-900 hover:bg-white" : "bg-white/[0.04] border-white/10 text-white hover:bg-white/[0.08]"
+              }`}
             >
               <span>Vibe Coding</span>
-              <span className="text-white/40">→</span>
+              <span className={isLight ? "text-slate-400" : "text-white/40"}>→</span>
             </a>
 
             <a

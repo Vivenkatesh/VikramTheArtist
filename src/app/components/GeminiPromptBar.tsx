@@ -649,9 +649,15 @@ export function GeminiPromptBar({
     ? "listening"
     : "idle";
 
+  useEffect(() => {
+    document.documentElement.classList.toggle("ama-engine-active", isActive);
+    return () => document.documentElement.classList.remove("ama-engine-active");
+  }, [isActive]);
+
   // Focus side panel input automatically when panel opens
   useEffect(() => {
-    if (isOpen) {
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    if (isOpen && !isMobile) {
       setTimeout(() => {
         sideInputRef.current?.focus({ preventScroll: true });
       }, 150);
@@ -720,6 +726,13 @@ export function GeminiPromptBar({
     const prompt = (textToSend || panelInputVal || inputVal).trim();
     if (!prompt || isLoading) return;
 
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      inputRef.current?.blur();
+      dockedInputRef.current?.blur();
+      sideInputRef.current?.blur();
+      setIsFocused(false);
+    }
+
     setInputVal("");
     setPanelInputVal("");
     setIsOpen(true);
@@ -757,6 +770,13 @@ export function GeminiPromptBar({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleMobileClose = () => {
+    setInputVal("");
+    setIsFocused(false);
+    inputRef.current?.blur();
+    setIsOpen(false);
   };
 
   const handleClearChat = () => {
@@ -892,6 +912,28 @@ export function GeminiPromptBar({
 
   return (
     <>
+      {isActive && (
+        <div
+          className="ama-mobile-active-backdrop"
+          style={{
+            background: isLight ? "rgba(248, 250, 252, 0.52)" : "rgba(8, 11, 20, 0.58)",
+          }}
+          aria-hidden="true"
+        />
+      )}
+
+      {isActive && (
+        <button
+          type="button"
+          className="ama-mobile-close"
+          onClick={handleMobileClose}
+          aria-label="Close Ask Vikram"
+          title="Close Ask Vikram"
+        >
+          <X size={20} strokeWidth={2.2} />
+        </button>
+      )}
+
       {/* ── MOBILE / TABLET OVERLAY BACKDROP ── */}
       {isOpen && (
         <div
@@ -1344,18 +1386,28 @@ export function GeminiPromptBar({
       {/* ── 1. HERO RESTING CLUSTER (Disappears cleanly on scroll from hero) ── */}
       <div
         className={`ama-hero-cluster ${
-          !isHeroScrolled && !docked && !isOpen
+          isActive ? "ama-hero-cluster-active" : ""
+        } ${
+          ((!isHeroScrolled && !docked) || (docked && isFocused)) && !isOpen
             ? "ama-hero-cluster-visible"
             : "ama-hero-cluster-hidden"
         }`}
       >
         {/* Suggestion Chips */}
-        <div className="ama-suggestion-row pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-2.5 relative z-20">
+        <div className={`ama-suggestion-row ${isActive ? "ama-suggestion-row-active" : ""} pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-2.5 relative z-20`}>
           {SUGGESTION_CHIPS.map((chip) => (
             <button
               key={chip}
               type="button"
-              onClick={() => handleSend(chip)}
+              onPointerDown={(e) => {
+                e.preventDefault();
+                handleSend(chip);
+              }}
+              onClick={(e) => {
+                if (e.detail === 0) {
+                  handleSend(chip);
+                }
+              }}
               className="gemini-suggestion-chip px-4 sm:px-4.5 py-1.5 rounded-full cursor-pointer select-none text-xs sm:text-[13px] font-normal tracking-tight"
               style={{
                 background: isLight ? "rgba(255, 255, 255, 0.38)" : "rgba(255, 255, 255, 0.05)",
@@ -1497,16 +1549,10 @@ export function GeminiPromptBar({
               {!inputVal && (
                 <div className="pointer-events-none absolute left-0 right-0 flex items-center text-[13.5px] tracking-tight select-none z-10 overflow-hidden text-ellipsis whitespace-nowrap font-normal command-bar-placeholder-text">
                   <span
-                    className="mr-1.5 shrink-0"
-                    style={{ color: isLight ? "#475569" : "#cbd5e1" }}
-                  >
-                    Hi, I’m Vikram.
-                  </span>
-                  <span
                     className="truncate"
                     style={{ color: isLight ? "#64748b" : "#94a3b8" }}
                   >
-                    Ask me anything.
+                    Ask me anything
                   </span>
                 </div>
               )}
@@ -1516,6 +1562,8 @@ export function GeminiPromptBar({
                 type="text"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();

@@ -1339,7 +1339,7 @@ function LightSkyParallax() {
         {/* ── MIDGROUND: Skateboard Astronaut (z-index 10) ── */}
         <div
           ref={astroRef}
-          className="pointer-events-none z-10 hidden sm:block absolute"
+          className="light-skater-astro pointer-events-none z-10 hidden sm:block absolute"
           style={{
             right: "clamp(160px, calc(5vw + 150px), 210px)",
             top: "clamp(340px, 46vh, 520px)",
@@ -1560,6 +1560,9 @@ const initialThemeMode = (): ThemeMode => {
   if (typeof window !== "undefined") {
     const urlTheme = new URLSearchParams(window.location.search).get("theme");
     if (urlTheme === "light" || urlTheme === "dark") return urlTheme;
+
+    if (routeFromPath() === "home") return "light";
+
     const saved = localStorage.getItem("theme_mode") || localStorage.getItem("adopt_theme_mode");
     if (saved === "light" || saved === "dark") return saved;
     if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {

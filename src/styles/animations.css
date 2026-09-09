@@ -329,9 +329,20 @@
     padding-right: 12px;
   }
 
+  .ama-hero-cluster.ama-hero-cluster-active {
+    z-index: 110;
+    pointer-events: auto;
+  }
+
   .ama-suggestion-row {
+    display: none;
     gap: 6px;
     padding: 0 2px;
+  }
+
+  .ama-suggestion-row.ama-suggestion-row-active {
+    display: flex;
+    pointer-events: auto;
   }
 }
 
@@ -365,7 +376,7 @@
 
 .ama-docked-container .command-bar {
   height: 100%;
-  padding: 0 8px 0 16px;
+  padding: 0 14px 0 16px;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
@@ -413,7 +424,48 @@
     height: 44px;
   }
   .ama-docked-container .command-bar {
-    padding: 0 6px 0 12px;
+    padding: 0 6px 0 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .ama-docked-container {
+    right: 12px;
+  }
+
+  .ama-docked-container .command-bar-wrapper,
+  .ama-docked-container .command-bar {
+    width: 100%;
+  }
+
+  .ama-docked-container .command-bar {
+    padding-left: 22px;
+    padding-right: 20px;
+  }
+
+  .ama-docked-container input,
+  .ama-docked-container .command-bar-placeholder-text {
+    font-size: 15px !important;
+  }
+
+  .ama-hero-cluster.ama-hero-cluster-active.ama-hero-cluster-visible {
+    left: auto;
+    right: 12px;
+    bottom: 108px;
+    width: clamp(280px, 26vw, 390px);
+    padding-left: 0;
+    padding-right: 0;
+    z-index: 81;
+  }
+
+  .ama-hero-cluster.ama-hero-cluster-active.ama-hero-cluster-visible .ama-suggestion-row {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .ama-hero-cluster.ama-hero-cluster-active.ama-hero-cluster-visible .ama-hero-bar-box,
+  .ama-hero-cluster.ama-hero-cluster-active.ama-hero-cluster-visible > .text-center {
+    display: none;
   }
 }
 

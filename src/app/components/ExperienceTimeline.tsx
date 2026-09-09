@@ -942,7 +942,7 @@ export function ExperienceTimeline() {
 
         @media (max-width: 767px) {
           .tl-spine-light {
-            left: 38px !important;
+            left: 22px !important;
             top: 44px !important;
             bottom: 44px !important;
           }
