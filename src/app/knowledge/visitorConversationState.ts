@@ -12,6 +12,8 @@ export interface ChatMessage {
   timestamp: number;
   source?: "gemini" | "knowledge-base" | "boundary";
   answerMode?: "documented_experience" | "recorded_viewpoint" | "application";
+  card?: "resume" | "linkedin" | "phone" | "audio";
+  utilityIntent?: "resume_request" | "linkedin_request" | "phone_request" | "audio_journey";
 }
 
 export interface ConversationState {

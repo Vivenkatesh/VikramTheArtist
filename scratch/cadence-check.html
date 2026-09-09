@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadence Control Test</title>
+  <style>
+    body { margin: 0; background: #111; color: #eee; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; }
+    #box { width: 100px; height: 100px; background: #3b82f6; border-radius: 12px; }
+  </style>
+</head>
+<body>
+  <div id="box"></div>
+  <script>
+    const box = document.getElementById("box");
+    let angle = 0;
+    function animate() {
+      angle = (angle + 2) % 360;
+      box.style.transform = `rotate(${angle}deg)`;
+      requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+    window.measureCadence = function(durationMs = 2000) {
+      return new Promise(resolve => {
+        const frameTimes = [];
+        let last = performance.now();
+        let active = true;
+
+        function tick(now) {
+          if (!active) return;
+          frameTimes.push(now - last);
+          last = now;
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+
+        setTimeout(() => {
+          active = false;
+          const deltas = frameTimes.slice(2);
+          const totalDuration = deltas.reduce((a, b) => a + b, 0);
+          const avgFps = deltas.length / (totalDuration / 1000);
+          const sorted = [...deltas].sort((a, b) => a - b);
+          const p50 = sorted[Math.floor(sorted.length * 0.50)] || 0;
+          const p95 = sorted[Math.floor(sorted.length * 0.95)] || 0;
+          resolve({
+            totalFrames: deltas.length,
+            durationMs: Math.round(totalDuration),
+            avgFps: Math.round(avgFps * 10) / 10,
+            p50Ms: Math.round(p50 * 10) / 10,
+            p95Ms: Math.round(p95 * 10) / 10,
+            minMs: Math.round(Math.min(...deltas) * 10) / 10,
+            maxMs: Math.round(Math.max(...deltas) * 10) / 10
+          });
+        }, durationMs);
+      });
+    };
+  </script>
+</body>
+</html>

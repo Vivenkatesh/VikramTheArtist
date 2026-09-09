@@ -32,7 +32,7 @@ export const BOUNDARY_RULES: BoundaryRule[] = [
   {
     id: "boundary-compensation",
     boundaryType: "rate_expectation",
-    triggerKeywords: ["salary", "rate", "compensation", "how much do you make", "hourly rate", "cost to hire"],
+    triggerKeywords: ["salary", "compensation", "how much do you make", "hourly rate", "day rate", "daily rate", "consulting rate", "cost to hire", "pay rate"],
     rationale: "Compensation and consulting retainers depend on role scope, equity structure, and strategic impact.",
     approvedFallbackWording: "I assess opportunities based on overall scope, level, and impact. Feel free to reach out directly via my contact links to discuss specific roles.",
     suggestedDestination: {

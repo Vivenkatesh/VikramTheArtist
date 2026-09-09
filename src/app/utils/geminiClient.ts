@@ -3,7 +3,7 @@
  * Version: 2026.1.0 (Connected to Versioned Persona & Hybrid Retrieval Engine)
  */
 
-import { retrieveRelevantKnowledge } from "../knowledge/retrievalEngine";
+import { retrieveRelevantKnowledge, sanitizeRawRecord, IntentType, RecordType } from "../knowledge/retrievalEngine";
 import { buildSystemInstruction } from "../knowledge/persona/promptBuilder";
 import { ChatMessage } from "../knowledge/visitorConversationState";
 
@@ -23,22 +23,57 @@ export function setStoredApiKey(key: string): void {
   }
 }
 
+export interface AskGeminiResponse {
+  text: string;
+  source: "gemini" | "knowledge-base";
+  mode?: string;
+  card?: "resume" | "linkedin" | "phone" | "audio";
+  detectedIntent?: IntentType;
+  selectedRecordType?: RecordType;
+}
+
 /**
  * Ask Gemini a question about Vikram, with grounded hybrid retrieval and fallback
  */
 export async function askGemini(
   prompt: string,
   history: ChatMessage[] = []
-): Promise<{ text: string; source: "gemini" | "knowledge-base"; mode?: string }> {
+): Promise<AskGeminiResponse> {
   // Step 1: Hybrid Retrieval Engine processes the query against published knowledge
   const retrieval = retrieveRelevantKnowledge(prompt);
 
   // If a strict boundary was triggered, immediately return the approved boundary wording
   if (retrieval.matchedBoundary && retrieval.directAnswer) {
     return {
+      text: sanitizeRawRecord(retrieval.directAnswer),
+      source: "knowledge-base",
+      mode: retrieval.mode,
+      detectedIntent: retrieval.detectedIntent,
+      selectedRecordType: retrieval.selectedRecordType
+    };
+  }
+
+  // If a deterministic utility intent was triggered (Resume, LinkedIn, Phone, Audio), immediately return canonical CTA/card
+  if (retrieval.utilityIntent && retrieval.directAnswer) {
+    return {
       text: retrieval.directAnswer,
       source: "knowledge-base",
-      mode: retrieval.mode
+      mode: retrieval.mode,
+      card: retrieval.card,
+      detectedIntent: retrieval.detectedIntent,
+      selectedRecordType: retrieval.selectedRecordType
+    };
+  }
+
+  // If a deterministic owner fact was triggered (Current company, role, location, years, identity, education),
+  // return the calibrated factual answer immediately without entering philosophy retrieval
+  if (retrieval.detectedIntent === "owner_fact" && retrieval.directAnswer) {
+    return {
+      text: sanitizeRawRecord(retrieval.directAnswer),
+      source: "knowledge-base",
+      mode: retrieval.mode,
+      detectedIntent: retrieval.detectedIntent,
+      selectedRecordType: retrieval.selectedRecordType
     };
   }
 
@@ -86,9 +121,11 @@ export async function askGemini(
         const candidate = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (candidate) {
           return {
-            text: candidate,
+            text: sanitizeRawRecord(candidate),
             source: "gemini",
-            mode: retrieval.mode
+            mode: retrieval.mode,
+            detectedIntent: retrieval.detectedIntent,
+            selectedRecordType: retrieval.selectedRecordType
           };
         }
       } else {
@@ -102,23 +139,30 @@ export async function askGemini(
   // Step 2: If Gemini is offline or not configured, return the high-confidence direct answer
   if (retrieval.directAnswer) {
     return {
-      text: retrieval.directAnswer,
+      text: sanitizeRawRecord(retrieval.directAnswer),
       source: "knowledge-base",
-      mode: retrieval.mode
+      mode: retrieval.mode,
+      card: retrieval.card,
+      detectedIntent: retrieval.detectedIntent,
+      selectedRecordType: retrieval.selectedRecordType
     };
   }
 
   // Step 3: Default grounded synthesis from retrieved context chunks
   if (retrieval.contextChunks.length > 0) {
     return {
-      text: retrieval.contextChunks[0],
+      text: sanitizeRawRecord(retrieval.contextChunks[0]),
       source: "knowledge-base",
-      mode: retrieval.mode
+      mode: retrieval.mode,
+      detectedIntent: retrieval.detectedIntent,
+      selectedRecordType: retrieval.selectedRecordType
     };
   }
 
   return {
-    text: "I am a Product Design Leader with 18+ years of global experience across Microsoft, Google, McKinsey, and Oracle. Currently, I lead Copilot Adoption Community experiences at Microsoft, scaling enterprise usage to 1.5M+ MAU across 850+ tenants and expanding Copilot weekly active users from 936K to 3.4M. Ask me about my work on Copilot, Google Cloud & Anthos, enterprise AI workflows, or my design leadership philosophy.",
+    text: "I haven’t captured enough verified detail about that yet, and I’d rather not guess. If you’d like to go deeper, feel free to contact me directly.",
     source: "knowledge-base",
+    detectedIntent: "general_knowledge",
+    selectedRecordType: "canonical_owner_profile"
   };
 }

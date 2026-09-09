@@ -1698,10 +1698,31 @@ export default function App() {
   }
 
   const isLight = themeMode === "light";
+  const [isDocked, setIsDocked] = useState(false);
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const sy = window.scrollY;
+      const workEl = document.getElementById("work");
+      const workTop = workEl ? workEl.getBoundingClientRect().top + window.scrollY : 750;
+      // Appear at the top with the menu before "My work" section
+      const dockThreshold = Math.max(220, workTop - 500);
+
+      if (!isDocked && sy >= dockThreshold) {
+        setIsDocked(true);
+      } else if (isDocked && sy < dockThreshold - 40) {
+        setIsDocked(false);
+      }
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isDocked]);
 
   return (
     <div
-      className={`min-h-screen font-sans transition-colors duration-300 ${isLight ? "light" : ""}`}
+      className={`min-h-screen font-sans transition-colors duration-300 ${isLight ? "light" : ""} ${isSidePanelOpen ? "has-side-panel-open" : ""}`}
       style={{
         background: "var(--bg-page)",
         color: "var(--text-1)",
@@ -1732,6 +1753,7 @@ export default function App() {
         mode={themeMode}
         onToggleTheme={toggleThemeMode}
         onNavigateVibeCoding={() => navigate("vibe-coding")}
+        isDocked={isDocked}
       />
       <main id="main-content" tabIndex={-1} className="portfolio-main" style={{ position: "relative", zIndex: 1, outline: "none" }}>
         <Hero mode={themeMode} />
@@ -1745,7 +1767,12 @@ export default function App() {
         <SkillsSection />
         <FooterCTA />
       </main>
-      <GeminiPromptBar mode={themeMode} />
+      <GeminiPromptBar
+        mode={themeMode}
+        isDocked={isDocked}
+        isOpen={isSidePanelOpen}
+        onOpenChange={setIsSidePanelOpen}
+      />
     </div>
   );
 }

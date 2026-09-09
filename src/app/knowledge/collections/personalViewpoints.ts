@@ -131,15 +131,44 @@ export const PERSONAL_VIEWPOINTS: PersonalViewpoint[] = [
     relatedTopics: ["systems-design", "enterprise-ux", "information-architecture"]
   },
   {
-    id: "viewpoint-craft-interrogate-strategy",
-    topic: "Using Craft to Interrogate Strategy Across Levels of Resolution",
-    belief: "I use craft not only to execute strategy, but to interrogate it. My role as a design leader is to move between levels of resolution.",
-    whyIHoldThisBelief: "When strategic intent is agreed upon in the abstract, divergent interpretations appear at the interaction layer because trade-offs haven't become tangible. Moving closer to craft—information hierarchy, key interaction states, flows, or prototypes—reveals what a strategy document cannot, replacing vague debates like 'simple' or 'intelligent' with precise operational questions about user control, automation boundaries, and breakdown states.",
+    id: "viewpoint-career-leadership-snapshot",
+    topic: "Career Journey, Hands-on Leadership & Design Management",
+    belief: "I am hands-on even when I am being strategic. Strategy is part of my craft, and craft is how I make strategy concrete. I use design as a thinking tool at every level—from product strategy to interaction detail.",
+    whyIHoldThisBelief: "Being a hands-on design leader does not mean owning every screen or only moving into craft when something is blocked. It means using flows, interaction models, prototypes, and information architecture from the beginning to shape, test, and interrogate product direction itself. Strategy and craft are not separate modes in my practice. Alongside this, I bring a design manager mindset focused on mentorship, critique culture, team rituals, and close engineering partnership to turn complex, ambiguous problems into experiences that feel clear, useful, and human.",
     concreteExamples: [
-      "Selective hands-on prototyping when product strategy fails to converge, uncovering unfeasible roadmap assumptions and feeding learnings back into strategic direction"
+      "Operating at the strategic level while staying hands-on with interaction models at Microsoft across Copilot adoption and Engage Analytics",
+      "Pairing high-level roadmapping with hands-on systems architecture and security workflows during the Anthos overhaul at Google in NYC",
+      "Leading cross-functional design initiatives across multidisciplinary teams at McKinsey in Europe"
     ],
-    exceptionsAndNuances: "When product direction and interaction models are already proven and converging smoothly; leaders should then delegate fully to preserve team autonomy and focus on organizational scaling.",
-    searchKeywords: ["how hands-on is vikram", "hands-on as a design leader", "craft and strategy", "interrogate strategy", "levels of resolution", "hands-on"],
+    exceptionsAndNuances: "Being hands-on does not mean micromanaging every pixel or redesigning work in my image; it means using tangible design artifacts to strengthen team thinking and test assumptions.",
+    searchKeywords: [
+      "what kind of designer is vikram",
+      "career journey",
+      "hands-on leadership",
+      "hands-on even when strategic",
+      "how does vikram balance strategy and execution",
+      "design management",
+      "design manager mindset",
+      "what kind of designer"
+    ],
+    sourceRef: "Owner Knowledge Interview",
+    verificationStatus: "verified",
+    publicApprovalStatus: "approved",
+    lastReviewedDate: "2026-09-09",
+    applicableTimePeriod: "Permanent",
+    relatedProjects: ["Copilot Adoption", "Anthos", "McKinsey Consulting"],
+    relatedTopics: ["career", "leadership", "craft", "strategy", "design-management"]
+  },
+  {
+    id: "viewpoint-craft-interrogate-strategy",
+    topic: "Using Craft to Shape and Interrogate Strategy Across Levels of Resolution",
+    belief: "I am hands-on even when I am being strategic. Strategy is part of my craft, and craft is how I make strategy concrete. I use design as a thinking tool at every level—from strategy to interaction detail.",
+    whyIHoldThisBelief: "Strategy and craft are not separate modes where one only turns to craft when execution fails. Tangible design artifacts—flows, interaction models, prototypes, and information architecture—expose tensions, validate feasibility, and reveal trade-offs that abstract strategy documents cannot. Working through key interaction states replaces vague debates like 'simple' or 'intelligent' with precise operational clarity.",
+    concreteExamples: [
+      "Using interactive prototypes and detailed information architecture from the outset to test strategic product hypotheses at Microsoft, Google, and McKinsey"
+    ],
+    exceptionsAndNuances: "Being hands-on means using design to interrogate thinking and align teams around concrete trade-offs, never micromanaging designers' autonomy or imposing personal taste as authority.",
+    searchKeywords: ["how hands-on is vikram", "hands-on as a design leader", "craft and strategy", "interrogate strategy", "levels of resolution", "hands-on even when strategic", "balance strategy and execution"],
     sourceRef: "Owner Knowledge Interview",
     verificationStatus: "verified",
     publicApprovalStatus: "approved",
@@ -201,5 +230,37 @@ export const PERSONAL_VIEWPOINTS: PersonalViewpoint[] = [
     applicableTimePeriod: "Permanent",
     relatedProjects: [],
     relatedTopics: ["leadership-cadence", "design-critique", "team-culture"]
+  },
+  {
+    id: "viewpoint-career-journey-and-human-technology",
+    topic: "Career Journey, Human-Centered Technology & Design Identity",
+    belief: "The consistent thread in my career has been translating complex technology into experiences people can understand, trust, and act on. My work sits at the intersection of technical systems, visual craft, and human behavior.",
+    whyIHoldThisBelief: "A Computer Science foundation gave me technical and systems grounding; visual design cultivated my sensitivity to hierarchy, composition, and emotional resonance; UX deepened my understanding of cognitive load and usability; enterprise systems taught me to structure complexity without oversimplifying it; and AI shifted my focus toward trust, adoption, and human confidence. Strategy and craft are unified: I am hands-on even when I am being strategic, using design artifacts as thinking tools to interrogate strategy and test whether ideas hold up in reality.",
+    concreteExamples: [
+      "Translating complex multi-cloud architecture and security states into structured, progressive experiences in Google Anthos",
+      "Designing behavioral adoption loops and prompt contextualization for enterprise Copilot in Microsoft Viva Engage",
+      "Bridging technical feasibility with user-centered transformations at McKinsey in Europe",
+      "Demonstrating human-centered AI principles dynamically through this conversational portfolio rather than relying solely on static case studies"
+    ],
+    exceptionsAndNuances: "Designing for human confidence applies universally, but the degree of necessary scaffolding and explainability scales down for low-risk, easily reversible tasks.",
+    searchKeywords: [
+      "career journey",
+      "what connects vikram's work",
+      "what connects your work",
+      "through-line",
+      "technical background influence",
+      "how does art influence",
+      "why is vikram interested in ai",
+      "making technology feel human",
+      "why did vikram build an ai-based portfolio",
+      "human-centered technology"
+    ],
+    sourceRef: "Owner Knowledge Record: Career Journey, Human-Centered Technology & Design Identity",
+    verificationStatus: "verified",
+    publicApprovalStatus: "approved",
+    lastReviewedDate: "2026-09-09",
+    applicableTimePeriod: "Permanent",
+    relatedProjects: ["Copilot Adoption", "Anthos", "McKinsey Consulting", "Ask Vikram AMA"],
+    relatedTopics: ["career-through-line", "design-identity", "human-centered-ai", "art-and-technology"]
   }
 ];

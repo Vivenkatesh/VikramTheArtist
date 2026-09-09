@@ -313,7 +313,7 @@ export const CANONICAL_FACTS: CanonicalFact[] = [
     category: "contact",
     subject: "Contact & Portfolio Access",
     exactClaim: "Email: vikramtheartist@gmail.com, LinkedIn: linkedin.com/in/vikramtheartist, Portfolio: vikramtheartist.com.",
-    searchKeywords: ["email", "contact", "reach", "linkedin", "hire", "talk", "resume"],
+    searchKeywords: ["email", "contact", "reach", "hire", "talk", "portfolio", "get in touch"],
     sourceRef: "vikramtheartist.com footer",
     verificationStatus: "verified",
     publicApprovalStatus: "approved",

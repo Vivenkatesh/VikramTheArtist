@@ -13,6 +13,9 @@ import { PERSONAL_INTERESTS } from "./collections/personalInterests";
 import { VOICE_EXAMPLES } from "./collections/voiceExamples";
 import { EVIDENCE_ASSETS } from "./collections/evidenceAssets";
 import { BOUNDARY_RULES } from "./collections/boundaries";
+import { CANONICAL_CONTACT_PROFILE, CANONICAL_OWNER_PROFILE } from "./collections/contactProfile";
+
+export { CANONICAL_CONTACT_PROFILE, CANONICAL_OWNER_PROFILE };
 
 export const PUBLISHED_FACTS = CANONICAL_FACTS.filter(
   (f) => f.publicApprovalStatus === "approved"

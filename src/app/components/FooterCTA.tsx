@@ -299,7 +299,7 @@ export function FooterCTA() {
         >
           Here&apos;s my{" "}
           <a
-            href="https://drive.google.com/file/d/1ksC8bHO8TmkG-wXNkcX1iVoBfTK7vnLo/view?usp=sharing"
+            href="https://drive.google.com/file/d/1gexpxviNXsTsOfx1RBZwYVW2caqICJGl/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
             className="footer-link"

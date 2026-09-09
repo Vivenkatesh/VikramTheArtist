@@ -4,9 +4,10 @@ interface NavProps {
   mode?: "dark" | "light";
   onToggleTheme?: () => void;
   onNavigateVibeCoding?: () => void;
+  isDocked?: boolean;
 }
 
-export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding }: NavProps) {
+export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDocked = false }: NavProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const isLight = mode === "light";
@@ -30,8 +31,14 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding }: NavP
           padding: isScrolled ? "12px 32px" : "20px 32px",
         }}
       >
-        {/* ── Left Placeholder (Maintains flex layout) ── */}
-        <div className="pointer-events-auto" />
+        {/* ── Left Placeholder (Maintains flex layout and reserves space for docked search bar) ── */}
+        <div
+          className="pointer-events-auto transition-all duration-500 ease-out hidden md:block"
+          style={{
+            width: isDocked ? "clamp(280px, 26vw, 390px)" : "0px",
+            height: "44px",
+          }}
+        />
 
         {/* ── Desktop Navigation Links (hidden md:flex) ── */}
         <div className="hidden md:flex items-center gap-6 sm:gap-8">
