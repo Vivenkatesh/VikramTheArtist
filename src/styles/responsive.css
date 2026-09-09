@@ -190,12 +190,14 @@ html, body {
 
 /* ── Work Section ────────────────────────────────────────────── */
 #work {
+  margin-top: 100px !important;
   padding-top: clamp(100px, 14vw, 240px) !important;
   padding-bottom: 40px !important;
 }
 
 @media (max-width: 1023px) {
   #work {
+    margin-top: 180px !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
@@ -203,7 +205,7 @@ html, body {
 
 @media (max-width: 767px) {
   #work {
-    margin-top: 80px !important;
+    margin-top: 180px !important;
     padding-top: 0px !important;
   }
 }
@@ -272,6 +274,42 @@ html, body {
   .project-card-ctas .shine-inner {
     padding: 8px 16px !important;
     font-size: 13px !important;
+  }
+}
+
+/* Dark mode keeps the hero editorial and left-aligned, matching light mode. */
+[data-theme="dark"] .hero-section {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+[data-theme="dark"] .hero-title-block {
+  align-items: flex-start !important;
+  text-align: left !important;
+  max-width: 780px !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+[data-theme="dark"] .hero-heading-container {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+[data-theme="dark"] .hero-subtitle-block {
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+[data-theme="dark"] #work {
+  margin-top: 350px !important;
+}
+
+@media (max-width: 1023px) {
+  [data-theme="dark"] #work {
+    margin-top: 430px !important;
   }
 }
 

@@ -1,14 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   ArrowUp,
-  CirclePlus,
   Mic,
   FileText,
   ExternalLink,
   Phone,
   Copy,
   Check,
-  MoreVertical,
   X,
   Globe,
   Plus,
@@ -595,7 +593,6 @@ export function GeminiPromptBar({
   const [isListening, setIsListening] = useState(false);
   const [statusNotice, setStatusNotice] = useState<string | null>(null);
   const [showContextChip, setShowContextChip] = useState(true);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   // Track when visitor scrolls down from hero section so resting AMA engine cleanly disappears
   const [isHeroScrolled, setIsHeroScrolled] = useState(false);
@@ -643,7 +640,6 @@ export function GeminiPromptBar({
   const panelRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   const isLight = mode === "light";
   const isActive = isFocused || isOpen || isListening || inputVal.trim().length > 0;
@@ -661,18 +657,6 @@ export function GeminiPromptBar({
       }, 150);
     }
   }, [isOpen]);
-
-  // Click outside menu closes 3-dots dropdown
-  useEffect(() => {
-    if (!menuOpen) return;
-    const handleClickOutsideMenu = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutsideMenu);
-    return () => document.removeEventListener("mousedown", handleClickOutsideMenu);
-  }, [menuOpen]);
 
   // Animate conic glow angle smoothly
   useEffect(() => {
@@ -777,7 +761,6 @@ export function GeminiPromptBar({
 
   const handleClearChat = () => {
     setMessages([]);
-    setMenuOpen(false);
   };
 
   // Toggle voice recognition
@@ -980,59 +963,21 @@ export function GeminiPromptBar({
             </div>
           </div>
 
-          {/* Right Header Action Icons: ⋮ , ✕ */}
+          {/* Right Header Action Icons: clear conversation, close */}
           <div className="flex items-center gap-1.5 relative">
-            {/* 3 dots menu button */}
             <button
               type="button"
-              onClick={() => setMenuOpen(!menuOpen)}
-              title="More options"
-              aria-label="More options"
+              onClick={handleClearChat}
+              title="Clear conversation"
+              aria-label="Clear conversation"
               className="w-8 h-8 rounded-full border flex items-center justify-center text-slate-600 dark:text-slate-300 transition-all cursor-pointer hover:scale-105"
               style={{
                 background: isLight ? "rgba(255, 255, 255, 0.7)" : "rgba(255, 255, 255, 0.08)",
                 borderColor: isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.1)",
               }}
             >
-              <MoreVertical size={16} />
+              <Trash2 size={15} className="text-slate-500 dark:text-slate-300" />
             </button>
-
-            {/* Menu dropdown popup */}
-            {menuOpen && (
-              <div
-                ref={menuRef}
-                className="absolute right-0 top-10 w-52 rounded-2xl py-1.5 shadow-2xl border z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl"
-                style={{
-                  background: isLight ? "rgba(255, 255, 255, 0.96)" : "rgba(30, 36, 48, 0.96)",
-                  borderColor: isLight ? "rgba(226, 232, 240, 0.8)" : "rgba(255, 255, 255, 0.12)",
-                }}
-              >
-                {messages.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={handleClearChat}
-                    className="w-full px-3.5 py-2 text-xs text-left flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
-                    style={{ color: isLight ? "#334155" : "#e2e8f0" }}
-                  >
-                    <Trash2 size={14} className="text-red-500" />
-                    <span>Clear conversation</span>
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="w-full px-3.5 py-2 text-xs text-left flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
-                  style={{ color: isLight ? "#334155" : "#e2e8f0" }}
-                >
-                  <X size={14} className="text-slate-400" />
-                  <span>Close side panel</span>
-                </button>
-                <div className="h-px my-1 bg-black/5 dark:bg-white/10" />
-                <div className="px-3.5 py-1 text-[10.5px] text-slate-400">
-                  Ask Vikram AI • Side Panel
-                </div>
-              </div>
-            )}
 
             {/* Close ✕ button */}
             <button
@@ -1342,22 +1287,8 @@ export function GeminiPromptBar({
               aria-label="Ask a follow up"
             />
 
-            {/* Right Action Icons: + , 🌐 , 🎤 , ↑ */}
+            {/* Right Action Icons: voice input and send */}
             <div className="flex items-center gap-1 shrink-0 text-slate-500 dark:text-slate-400">
-              <button
-                type="button"
-                title="Add context"
-                className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
-              >
-                <Plus size={16} />
-              </button>
-              <button
-                type="button"
-                title="Web context"
-                className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
-              >
-                <Globe size={15} />
-              </button>
               <button
                 type="button"
                 onClick={handleMicClick}
@@ -1419,7 +1350,7 @@ export function GeminiPromptBar({
         }`}
       >
         {/* Suggestion Chips */}
-        <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-2.5 max-w-[760px] relative z-20">
+        <div className="ama-suggestion-row pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-2.5 relative z-20">
           {SUGGESTION_CHIPS.map((chip) => (
             <button
               key={chip}
@@ -1446,8 +1377,8 @@ export function GeminiPromptBar({
         <div className="ama-hero-bar-box">
           {/* Command Bar Wrapper with Conic Glow on Active */}
           <div ref={wrapperRef} className="command-bar-wrapper w-full h-full relative">
-            {isActive && !isHeroScrolled && !docked && !isOpen && (
-              <div className="conic-glow-layer" aria-hidden="true" />
+            {!isHeroScrolled && !docked && !isOpen && (
+              <div className={`conic-glow-layer ${isActive ? "conic-glow-layer-active" : ""}`} aria-hidden="true" />
             )}
 
             {/* Command Bar */}
@@ -1498,16 +1429,8 @@ export function GeminiPromptBar({
                 />
               </div>
 
-              {/* Action buttons: Context, voice mic, and submit arrow */}
+              {/* Action buttons: Voice mic and submit arrow */}
               <div className="flex items-center gap-1.5 sm:gap-2 relative z-20 shrink-0">
-                <button
-                  type="button"
-                  title="Add context"
-                  aria-label="Add context"
-                  className="p-1.5 sm:p-2 rounded-full text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
-                >
-                  <CirclePlus size={22} strokeWidth={1.8} />
-                </button>
                 <button
                   type="button"
                   onClick={(e) => {
