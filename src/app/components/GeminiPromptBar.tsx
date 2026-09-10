@@ -94,6 +94,7 @@ interface GeminiPromptBarProps {
   isDocked?: boolean;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  placement?: "floating" | "inline";
 }
 
 const SUGGESTION_CHIPS = [
@@ -577,6 +578,7 @@ export function GeminiPromptBar({
   isDocked: isDockedProp,
   isOpen: isOpenProp,
   onOpenChange,
+  placement = "floating",
 }: GeminiPromptBarProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const isOpen = isOpenProp !== undefined ? isOpenProp : internalOpen;
@@ -642,7 +644,8 @@ export function GeminiPromptBar({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const isLight = mode === "light";
-  const isActive = isFocused || isOpen || isListening || inputVal.trim().length > 0;
+  const isInline = placement === "inline";
+  const isActive = isFocused || isOpen || isListening;
   const waveState = isLoading
     ? "analyzing"
     : isListening || isFocused || inputVal.length > 0
@@ -1385,45 +1388,46 @@ export function GeminiPromptBar({
 
       {/* ── 1. HERO RESTING CLUSTER (Disappears cleanly on scroll from hero) ── */}
       <div
-        className={`ama-hero-cluster ${
+        className={`ama-hero-cluster ${isInline ? "ama-inline-cluster" : ""} ${
           isActive ? "ama-hero-cluster-active" : ""
         } ${
-          ((!isHeroScrolled && !docked) || (docked && isFocused)) && !isOpen
+          (isInline || ((!isHeroScrolled && !docked) || (docked && isFocused))) && !isOpen
             ? "ama-hero-cluster-visible"
             : "ama-hero-cluster-hidden"
         }`}
       >
-        {/* Suggestion Chips */}
-        <div className={`ama-suggestion-row ${isActive ? "ama-suggestion-row-active" : ""} pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-2.5 relative z-20`}>
-          {SUGGESTION_CHIPS.map((chip) => (
-            <button
-              key={chip}
-              type="button"
-              onPointerDown={(e) => {
-                e.preventDefault();
-                handleSend(chip);
-              }}
-              onClick={(e) => {
-                if (e.detail === 0) {
+        {!isInline && (
+          <div className={`ama-suggestion-row ${isActive ? "ama-suggestion-row-active" : ""} pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-2.5 relative z-20`}>
+            {SUGGESTION_CHIPS.map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                onPointerDown={(e) => {
+                  e.preventDefault();
                   handleSend(chip);
-                }
-              }}
-              className="gemini-suggestion-chip px-4 sm:px-4.5 py-1.5 rounded-full cursor-pointer select-none text-xs sm:text-[13px] font-normal tracking-tight"
-              style={{
-                background: isLight ? "rgba(255, 255, 255, 0.38)" : "rgba(255, 255, 255, 0.05)",
-                backdropFilter: "blur(14px)",
-                WebkitBackdropFilter: "blur(14px)",
-                color: isLight ? "#334155" : "rgba(241, 245, 249, 0.85)",
-                border: isLight ? "1px solid rgba(255, 255, 255, 0.65)" : "1px solid rgba(255, 255, 255, 0.12)",
-                boxShadow: isLight
-                  ? "0 2px 10px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.8)"
-                  : "0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.08)",
-              }}
-            >
-              {chip}
-            </button>
-          ))}
-        </div>
+                }}
+                onClick={(e) => {
+                  if (e.detail === 0) {
+                    handleSend(chip);
+                  }
+                }}
+                className="gemini-suggestion-chip px-4 sm:px-4.5 py-1.5 rounded-full cursor-pointer select-none text-xs sm:text-[13px] font-normal tracking-tight"
+                style={{
+                  background: isLight ? "rgba(255, 255, 255, 0.38)" : "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(14px)",
+                  WebkitBackdropFilter: "blur(14px)",
+                  color: isLight ? "#334155" : "rgba(241, 245, 249, 0.85)",
+                  border: isLight ? "1px solid rgba(255, 255, 255, 0.65)" : "1px solid rgba(255, 255, 255, 0.12)",
+                  boxShadow: isLight
+                    ? "0 2px 10px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.8)"
+                    : "0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.08)",
+                }}
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Hero 68px Command Bar Box */}
         <div className="ama-hero-bar-box">
@@ -1464,8 +1468,6 @@ export function GeminiPromptBar({
                   type="text"
                   value={inputVal}
                   onChange={(e) => setInputVal(e.target.value)}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();

@@ -4,10 +4,11 @@ interface NavProps {
   mode?: "dark" | "light";
   onToggleTheme?: () => void;
   onNavigateVibeCoding?: () => void;
+  onNavigateHome?: (hash?: string) => void;
   isDocked?: boolean;
 }
 
-export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDocked = false }: NavProps) {
+export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, onNavigateHome, isDocked = false }: NavProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const isLight = mode === "light";
@@ -31,6 +32,20 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDock
           padding: isScrolled ? "12px 32px" : "20px 32px",
         }}
       >
+        <a
+          href="/"
+          aria-label="Vikram home"
+          onClick={(e) => {
+            if (onNavigateHome) {
+              e.preventDefault();
+              onNavigateHome();
+            }
+          }}
+          className="portfolio-logo"
+        >
+          <img src={`${import.meta.env.BASE_URL}IMG/Vikram%20Logo.svg`} alt="Vikram" />
+        </a>
+
         {/* ── Left Placeholder (Maintains flex layout and reserves space for docked search bar) ── */}
         <div
           className="pointer-events-auto transition-all duration-500 ease-out hidden md:block"
@@ -44,6 +59,12 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDock
         <div className="hidden md:flex items-center gap-6 sm:gap-8">
           <a
             href="#work"
+            onClick={(e) => {
+              if (onNavigateHome) {
+                e.preventDefault();
+                onNavigateHome("work");
+              }
+            }}
             className={`text-[13.5px] font-medium tracking-normal transition-colors duration-200 ${
               isLight ? "text-[#334155] hover:text-[#070e24]" : "text-white/70 hover:text-white"
             }`}
@@ -52,11 +73,25 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDock
           </a>
           <a
             href="#experience"
+            onClick={(e) => {
+              if (onNavigateHome) {
+                e.preventDefault();
+                onNavigateHome("experience");
+              }
+            }}
             className={`text-[13.5px] font-medium tracking-normal transition-colors duration-200 ${
               isLight ? "text-[#334155] hover:text-[#070e24]" : "text-white/70 hover:text-white"
             }`}
           >
             My Experience
+          </a>
+          <a
+            href="/about"
+            className={`text-[13.5px] font-medium tracking-normal transition-colors duration-200 ${
+              isLight ? "text-[#334155] hover:text-[#070e24]" : "text-white/70 hover:text-white"
+            }`}
+          >
+            About
           </a>
           <a
             href="/vibe-coding"
@@ -199,7 +234,13 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDock
           >
             <a
               href="#work"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                if (onNavigateHome) {
+                  e.preventDefault();
+                  onNavigateHome("work");
+                }
+              }}
               className={`flex items-center justify-between p-4 rounded-2xl border text-base font-medium tracking-wide transition-all ${
                 isLight ? "bg-white/80 border-slate-200 text-slate-900 hover:bg-white" : "bg-white/[0.04] border-white/10 text-white hover:bg-white/[0.08]"
               }`}
@@ -210,12 +251,29 @@ export function Nav({ mode = "dark", onToggleTheme, onNavigateVibeCoding, isDock
 
             <a
               href="#experience"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                if (onNavigateHome) {
+                  e.preventDefault();
+                  onNavigateHome("experience");
+                }
+              }}
               className={`flex items-center justify-between p-4 rounded-2xl border text-base font-medium tracking-wide transition-all ${
                 isLight ? "bg-white/80 border-slate-200 text-slate-900 hover:bg-white" : "bg-white/[0.04] border-white/10 text-white hover:bg-white/[0.08]"
               }`}
             >
               <span>My Experience</span>
+              <span className={isLight ? "text-slate-400" : "text-white/40"}>→</span>
+            </a>
+
+            <a
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center justify-between p-4 rounded-2xl border text-base font-medium tracking-wide transition-all ${
+                isLight ? "bg-white/80 border-slate-200 text-slate-900 hover:bg-white" : "bg-white/[0.04] border-white/10 text-white hover:bg-white/[0.08]"
+              }`}
+            >
+              <span>About</span>
               <span className={isLight ? "text-slate-400" : "text-white/40"}>→</span>
             </a>
 

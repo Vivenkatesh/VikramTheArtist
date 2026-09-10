@@ -13,6 +13,16 @@ const rootHtml = fs.readFileSync(rootIndexHtmlPath, "utf-8");
 
 const routes = [
   {
+    path: "about",
+    title: "About Vikram — Product Design Leader",
+    description: "Meet Vikram, a product design leader and artist at heart with 18+ years of global experience across Microsoft, Google, McKinsey, and Oracle.",
+    canonical: "https://vikramtheartist.com/about",
+    robots: "index, follow, max-image-preview:large",
+    ogTitle: "About Vikram — Product Design Leader",
+    ogDescription: "Meet Vikram, a product design leader and artist at heart with 18+ years of global experience.",
+    ogUrl: "https://vikramtheartist.com/about",
+  },
+  {
     path: "adopt-landing",
     title: "ADOPT Playbook — Designing Adoption, Not Features | Vikram Venkatesh",
     description: "A behavioral framework created by Vikram Venkatesh to help teams understand why AI adoption stalls and design a path toward sustained use.",

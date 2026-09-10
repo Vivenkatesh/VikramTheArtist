@@ -3,6 +3,7 @@ import { Nav } from "./components/Nav";
 import { Hero } from "./components/Hero";
 import { WorkSection } from "./components/WorkSection";
 import { AboutSection } from "./components/AboutSection";
+import { AboutPage } from "./components/AboutPage";
 import { ExperienceTimeline } from "./components/ExperienceTimeline";
 import "../styles/animations.css";
 import { ClientsSection } from "./components/ClientsSection";
@@ -17,11 +18,12 @@ const AdoptLandingPage = lazy(() => import("./components/adopt/AdoptLandingPage"
 const VibeCodingPage = lazy(() => import("./components/vibecoding/VibeCodingPage").then(m => ({ default: m.VibeCodingPage })));
 const Feedback360Page = lazy(() => import("./components/feedback/Feedback360Page").then(m => ({ default: m.Feedback360Page })));
 
-type Route = "home" | "adopt" | "scale-copilot" | "scale-copilot-engage" | "adopt-v2" | "adopt-landing" | "vibe-coding" | "feedback-360";
+type Route = "home" | "about" | "adopt" | "scale-copilot" | "scale-copilot-engage" | "adopt-v2" | "adopt-landing" | "vibe-coding" | "feedback-360";
 type ThemeMode = "dark" | "light";
 
 const routeFromPath = (): Route => {
   const p = window.location.pathname.replace(/\/$/, "");
+  if (p.endsWith("/about")) return "about";
   if (p.endsWith("/work/feedback-360") || p.endsWith("/feedback-360")) return "feedback-360";
   if (p.endsWith("/adopt-landing") || p.endsWith("/adopt")) return "adopt-landing";
   if (p.endsWith("/scale-copilot-engage") || p.endsWith("/work/scale-copilot-engage")) return "scale-copilot-engage";
@@ -1617,6 +1619,7 @@ export default function App() {
       : next === "scale-copilot-engage" ? "/scale-copilot-engage"
       : next === "scale-copilot" || next === "adopt-v2" ? "/scale-copilot"
       : next === "vibe-coding" ? "/vibe-coding"
+      : next === "about" ? "/about"
       : "/";
     window.history.pushState({}, "", path);
     setRoute(next);
@@ -1658,6 +1661,21 @@ export default function App() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [isDocked, route]);
+
+  if (route === "about") {
+    return (
+      <AboutPage
+        mode={themeMode}
+        onToggleTheme={toggleThemeMode}
+        onBack={() => navigate("home")}
+        onNavigateVibeCoding={() => navigate("vibe-coding")}
+        onNavigateHome={(hash) => {
+          navigate("home");
+          if (hash) setTimeout(() => document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }), 100);
+        }}
+      />
+    );
+  }
 
   if (route === "feedback-360") {
     return (
