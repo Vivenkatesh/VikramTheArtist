@@ -9,7 +9,7 @@
 .about-portrait::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.52)); }
 .about-portrait-caption { position: absolute; z-index: 2; bottom: 16px; left: 18px; color: rgba(255,255,255,.7); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; }
 .about-person-card { padding: 15px 7px 0; }
-.about-person-card h2 { margin: 0 0 6px; color: #080808; font: 30px/1.1 Georgia, serif; }
+.about-person-card h2 { margin: 0 0 6px; color: #080808; font: 32px/1.1 Georgia, serif; }
 .about-person-card p { margin: 0 0 7px; font-size: 15px; font-weight: 600; color: #111; }
 .about-person-card > span { color: #68758b; font-size: 12px; }
 .about-person-links { display: flex; align-items: center; gap: 17px; margin: 20px 0; }
@@ -36,18 +36,20 @@
 .about-philosophy h2 { margin: 0 0 5px; font: 24px/1.1 Georgia, serif; font-weight: 400; }
 .about-philosophy-intro { max-width: 520px; margin: 0 0 18px; color: #53627b; font-size: 14px; line-height: 1.55; }
 .about-principle { min-height: 58px; display: grid; grid-template-columns: 38px 1fr; align-items: center; gap: 8px; border-top: 1px solid #e0e5eb; color: #203654; }
-.about-principle > span { color: #2874ef; font: 17px Georgia, serif; }
+.about-principle > span { color: #2874ef; font: 19px Georgia, serif; }
 .about-principle strong, .about-principle small { display: block; }
-.about-principle strong { font-size: 13px; }
-.about-principle small { color: #76839a; font-size: 11px; line-height: 1.4; margin-top: 3px; }
-.about-principle:last-child strong { font-size: 15px; }
-.about-principle:last-child small { font-size: 11px; line-height: 1.4; }
-.about-closing { width: 100%; max-width: none; box-sizing: border-box; margin: 0; padding: 0 24px 30px; border-top: 1px solid #cdd8e4; background: linear-gradient(180deg, rgba(232,240,250,.42), rgba(251,251,250,0)); }
-.about-ama-above-footer { min-height: 120px; position: relative; display: flex; align-items: center; justify-content: center; padding: 0; }
+.about-principle strong { font-size: 15px; }
+.about-principle small { color: #76839a; font-size: 13px; line-height: 1.4; margin-top: 3px; }
+.about-principle:last-child strong { font-size: 17px; }
+.about-principle:last-child small { font-size: 13px; line-height: 1.4; }
+.about-closing { width: 100%; max-width: none; box-sizing: border-box; position: relative; top: -60px; margin: 0; padding: 0 24px 30px; border-top: 1px solid #cdd8e4; background: linear-gradient(180deg, rgba(232,240,250,.42), rgba(251,251,250,0)); }
+.about-ama-above-footer { min-height: 120px; position: relative; top: -100px; display: flex; align-items: center; justify-content: center; padding: 0; }
 .about-ama-above-footer .ama-inline-cluster { position: relative; inset: auto; z-index: 2; width: 100%; padding: 0 16px; pointer-events: auto; }
 .about-closing-rule { position: relative; top: -20px; text-align: center; color: #6d84a1; font-size: 8px; letter-spacing: .32em; padding-top: 0; }
-.about-closing-content { min-height: 150px; display: flex; justify-content: center; align-items: center; text-align: center; overflow: hidden; padding-top: 0; }
+.about-closing-content { min-height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden; padding-top: 0; }
 .about-closing-content h2 { margin: 0; font: 34px/1.02 Georgia, serif; font-weight: 400; white-space: nowrap; }
+.about-closing-subtitle { margin: 18px 0 0; color: #53627b; font: 300 clamp(16px, 1.4vw, 22px)/1.5 'Segoe UI', sans-serif; }
+.about-closing-subtitle .footer-link { color: #3730d9; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
 .about-footer-line { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #d4deea; padding-top: 16px; color: #697991; font-size: 9px; }
 .about-ask-pill { border: 1px solid #cbd8e6; box-shadow: 0 6px 18px rgba(35,68,110,.12); border-radius: 25px; padding: 9px 17px; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.9); color: #405572; font-size: 10px; }
 @media (max-width: 720px) { .about-intro { grid-template-columns: 1fr; padding-top: 55px; gap: 40px; } .about-portrait { height: min(140vw, 525px); } .about-copy-column h1 { font-size: 38px; } .about-copy-column > p:not(.about-eyebrow) { font-size: 16px; line-height: 1.55; } .about-companies { flex-wrap: wrap; } .about-companies span + span { padding-left: 10px; } .about-closing-content { min-height: 130px; } .about-closing-heading { gap: 8px; } .about-closing-content h2 { font-size: 30px; white-space: normal; } .about-footer-line { align-items: flex-start; gap: 15px; flex-direction: column-reverse; } }

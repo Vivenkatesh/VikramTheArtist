@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Mail } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Nav } from "./Nav";
 import { GeminiPromptBar } from "./GeminiPromptBar";
 import "../../styles/about-page.css";
@@ -104,9 +104,16 @@ export function AboutPage({ mode, onToggleTheme, onBack, onNavigateVibeCoding, o
         <section className="about-closing" id="contact">
           <div className="about-closing-content">
             <h2>Create something that makes a positive difference.</h2>
+            <p className="about-closing-subtitle">
+              Here&apos;s my{" "}
+              <a href="https://drive.google.com/file/d/1gexpxviNXsTsOfx1RBZwYVW2caqICJGl/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="footer-link">resume</a>
+              . Get in touch on{" "}
+              <a href="https://www.linkedin.com/in/vikramtheartist" target="_blank" rel="noopener noreferrer" className="footer-link">LinkedIn</a>
+              !
+            </p>
           </div>
           <div className="about-closing-rule"><span>ART · DESIGN · PHILOSOPHY · TECHNOLOGY · WELL-BEING</span></div>
-          <div className="about-footer-line"><span>© Vikram</span><span className="about-ask-pill"><Mail size={13} /> Hi, I&apos;m Vikram. Ask me anything</span></div>
+          <div className="about-footer-line"><span>© Vikram</span></div>
         </section>
       </main>
     </div>
